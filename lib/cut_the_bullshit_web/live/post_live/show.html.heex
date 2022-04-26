@@ -38,7 +38,7 @@
 
 <div>
   <tbody id="comments">
-    <%= for comment <- @comments do %>
+    <%= for comment <- @post.comments do %>
       <tr id={"comment-#{comment.id}"}>
         <td><%= comment.text %></td>
 

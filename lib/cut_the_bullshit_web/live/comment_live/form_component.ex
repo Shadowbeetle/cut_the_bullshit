@@ -20,7 +20,7 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
     params =
       comment_params
       |> Map.put("user_id", socket.assigns.current_user.id)
-      |> Map.put("post_id", 8)
+      |> Map.put("post_id", 9)
 
     changeset =
       socket.assigns.comment
@@ -34,7 +34,7 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
     params =
       comment_params
       |> Map.put("user_id", socket.assigns.current_user.id)
-      |> Map.put("post_id", 8)
+      |> Map.put("post_id", 9)
 
 
     save_comment(socket, socket.assigns.action, params)
