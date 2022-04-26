@@ -68,7 +68,6 @@
         <td><%= comment.text %></td>
 
         <td>
-          <span><%= live_redirect "Show", to: Routes.comment_show_path(@socket, :show, comment) %></span>
           <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, @post.id, comment.id) %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
         </td>
