@@ -6,7 +6,7 @@ defmodule CutTheBullshit.Repo.Migrations.CreatePosts do
       add :title, :string, null: false
       add :description, :string, null: false
       add :url, :string, null: false
-      add :user_id, references(:users, on_delete: :nothing), null: false
+      add :user_id, references(:users, on_delete: :delete_all), null: false
 
       timestamps()
     end
