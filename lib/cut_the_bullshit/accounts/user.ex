@@ -34,6 +34,7 @@ defmodule CutTheBullshit.Accounts.User do
   def registration_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:email, :password, :username])
+    |> validate_confirmation(:password, message: "password confirmation does not match")
     |> validate_email()
     |> validate_password(opts)
   end
