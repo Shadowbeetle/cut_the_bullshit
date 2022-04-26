@@ -6,7 +6,9 @@ defmodule CutTheBullshit.Posts.Post do
     field :description, :string
     field :title, :string
     field :url, :string
-    field :user_id, :id
+
+    belongs_to :user, CutTheBullshit.Accounts.User
+    has_many :comments, CutTheBullshit.Comments.Comment
 
     timestamps()
   end

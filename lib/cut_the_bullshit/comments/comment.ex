@@ -6,8 +6,9 @@ defmodule CutTheBullshit.Comments.Comment do
 
   schema "comments" do
     field :text, :string
-    field :user_id, :id
-    field :post_id, :id
+
+    belongs_to :user, CutTheBullshit.Users.User
+    belongs_to :post, CutTheBullshit.Posts.Post
 
     timestamps()
   end
