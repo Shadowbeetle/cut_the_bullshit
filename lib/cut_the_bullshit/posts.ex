@@ -18,7 +18,7 @@ defmodule CutTheBullshit.Posts do
 
   """
   def list_posts do
-    Repo.all(Post)
+    Repo.all(Post) |> Repo.preload(:user)
   end
 
   @doc """
@@ -35,7 +35,7 @@ defmodule CutTheBullshit.Posts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_post!(id), do: Repo.get!(Post, id) |> Repo.preload(:comments)
+  def get_post!(id), do: Repo.get!(Post, id) |> Repo.preload(:comments) |> Repo.preload(:user)
 
   @doc """
   Creates a post.

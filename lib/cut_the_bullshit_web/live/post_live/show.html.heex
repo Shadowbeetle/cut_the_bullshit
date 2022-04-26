@@ -46,6 +46,11 @@
     <%= @post.url %>
   </li>
 
+  <li>
+    <strong>Author:</strong>
+    <%= @post.user.username %>
+  </li>
+
 </ul>
 
 <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @post), class: "button" %></span> |

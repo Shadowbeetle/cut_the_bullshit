@@ -20,7 +20,7 @@
       <th>Title</th>
       <th>Description</th>
       <th>Url</th>
-
+      <th>Author</th>
       <th></th>
     </tr>
   </thead>
@@ -30,6 +30,7 @@
         <td><%= post.title %></td>
         <td><%= post.description %></td>
         <td><%= post.url %></td>
+        <td><%= post.user.username %></td>
 
         <td>
           <span><%= live_redirect "Show", to: Routes.post_show_path(@socket, :show, post) %></span>
