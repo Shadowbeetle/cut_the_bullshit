@@ -8,8 +8,6 @@ defmodule CutTheBullshit.Posts.Post do
     field :url, :string
     field :user_id, :id
 
-    belongs_to :user, CutTheBullshit.Accounts.User
-
     timestamps()
   end
 

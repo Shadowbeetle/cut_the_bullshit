@@ -32,8 +32,6 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
   end
 
   defp save_post(socket, :edit, params) do
-    Logger.info "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    Logger.info inspect params
     case Posts.update_post(socket.assigns.post, params) do
       {:ok, _post} ->
         {:noreply,
@@ -47,8 +45,6 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
   end
 
   defp save_post(socket, :new, params) do
-    Logger.info "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    Logger.info inspect params
     case Posts.create_post(params) do
       {:ok, _post} ->
         {:noreply,
