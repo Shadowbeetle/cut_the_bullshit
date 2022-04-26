@@ -36,7 +36,14 @@
 <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @post), class: "button" %></span> |
 <span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index) %></span>
 
-<div>
+<table>
+  <thead>
+    <tr>
+      <th>Comments</th>
+
+      <th></th>
+    </tr>
+  </thead>
   <tbody id="comments">
     <%= for comment <- @post.comments do %>
       <tr id={"comment-#{comment.id}"}>
@@ -50,4 +57,4 @@
       </tr>
     <% end %>
   </tbody>
-</div>
+</table>
