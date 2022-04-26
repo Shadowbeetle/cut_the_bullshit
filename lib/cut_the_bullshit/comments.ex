@@ -7,6 +7,7 @@ defmodule CutTheBullshit.Comments do
   alias CutTheBullshit.Repo
 
   alias CutTheBullshit.Comments.Comment
+  alias CutTheBullshit.Posts.Post
 
   @doc """
   Returns the list of comments.
@@ -19,6 +20,15 @@ defmodule CutTheBullshit.Comments do
   """
   def list_comments do
     Repo.all(Comment)
+  end
+
+  def list_comments_of_post(%Post{} = post) do
+    query =
+      from c in Comment,
+        where: c.post_id == ^post.id,
+        order_by: [asc: :inserted_at]
+
+    Repo.all(query)
   end
 
   @doc """
