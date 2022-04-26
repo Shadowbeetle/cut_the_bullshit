@@ -17,12 +17,11 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"comment" => comment_params}, socket) do
-    Logger.info("validation  comment #{inspect(socket.assigns.comment)}")
 
     params =
       comment_params
       |> Map.put("user_id", socket.assigns.current_user.id)
-      |> Map.put("post_id", 9)
+      |> Map.put("post_id", socket.assigns.post.id)
 
     changeset =
       socket.assigns.comment
@@ -36,9 +35,8 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
     params =
       comment_params
       |> Map.put("user_id", socket.assigns.current_user.id)
-      |> Map.put("post_id", 9)
+      |> Map.put("post_id", socket.assigns.post.id)
 
-    Logger.info(inspect(params))
     save_comment(socket, socket.assigns.action, params)
   end
 

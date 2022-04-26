@@ -22,6 +22,7 @@
       title={@page_title}
       action={@live_action}
       comment={@comment}
+      post={@post}
       current_user={@current_user}
       return_to={Routes.post_show_path(@socket, :show, @post)}
     />
@@ -69,7 +70,7 @@
 
         <td>
           <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, @post.id, comment.id) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
         </td>
       </tr>
     <% end %>

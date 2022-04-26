@@ -9,6 +9,8 @@ defmodule CutTheBullshit.Comments do
   alias CutTheBullshit.Comments.Comment
   alias CutTheBullshit.Posts.Post
 
+  require Logger
+
   @doc """
   Returns the list of comments.
 
@@ -60,6 +62,8 @@ defmodule CutTheBullshit.Comments do
 
   """
   def create_comment(attrs \\ %{}) do
+    Logger.info("Creating comment: #{inspect(%Comment{} |> Comment.changeset(attrs))}")
+
     %Comment{}
     |> Comment.changeset(attrs)
     |> Repo.insert()

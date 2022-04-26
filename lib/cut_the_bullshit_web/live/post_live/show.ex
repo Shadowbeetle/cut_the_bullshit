@@ -30,6 +30,18 @@ defmodule CutTheBullshitWeb.PostLive.Show do
      |> assign(:comment, comment)}
   end
 
+  @impl true
+  def handle_event("delete_comment", %{"id" => id}, socket) do
+    {:ok, _} =
+      Comments.get_comment!(id)
+      |> Comments.delete_comment()
+
+    {:noreply,
+     socket
+     |> assign(:post, Posts.get_post!(socket.assigns.post.id))
+     |> put_flash(:info, "Comment deleted successfully")}
+  end
+
   defp page_title(:show), do: "Show Post"
   defp page_title(:edit_comment), do: "Show Post"
   defp page_title(:new_comment), do: "Show Post"
