@@ -17,6 +17,8 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"comment" => comment_params}, socket) do
+    Logger.info("validation  comment #{inspect(socket.assigns.comment)}")
+
     params =
       comment_params
       |> Map.put("user_id", socket.assigns.current_user.id)
@@ -36,11 +38,11 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
       |> Map.put("user_id", socket.assigns.current_user.id)
       |> Map.put("post_id", 9)
 
-
+    Logger.info(inspect(params))
     save_comment(socket, socket.assigns.action, params)
   end
 
-  defp save_comment(socket, :edit, params) do
+  defp save_comment(socket, :edit_comment, params) do
     case Comments.update_comment(socket.assigns.comment, params) do
       {:ok, _comment} ->
         {:noreply,
@@ -53,7 +55,7 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
     end
   end
 
-  defp save_comment(socket, :new, params) do
+  defp save_comment(socket, :new_comment, params) do
     case Comments.create_comment(params) do
       {:ok, _comment} ->
         {:noreply,

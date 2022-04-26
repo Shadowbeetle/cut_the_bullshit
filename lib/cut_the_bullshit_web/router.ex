@@ -66,6 +66,9 @@ defmodule CutTheBullshitWeb.Router do
 
     live "/posts/:id", PostLive.Show, :show
     live "/posts/:id/show/edit", PostLive.Show, :edit
+
+    live "/posts/:id/comments/new", PostLive.Show, :new_comment
+    live "/posts/:id/comments/:comment_id/edit", PostLive.Show, :edit_comment
   end
 
   scope "/", CutTheBullshitWeb do

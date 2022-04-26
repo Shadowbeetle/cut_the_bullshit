@@ -14,6 +14,20 @@
   </.modal>
 <% end %>
 
+<%= if @live_action in [:edit_comment, :new_comment] do %>
+  <.modal return_to={Routes.post_show_path(@socket, :show, @post)}>
+    <.live_component
+      module={CutTheBullshitWeb.CommentLive.FormComponent}
+      id={if @live_action == :edit_comment, do: @comment.id, else: :new}
+      title={@page_title}
+      action={@live_action}
+      comment={@comment}
+      current_user={@current_user}
+      return_to={Routes.post_show_path(@socket, :show, @post)}
+    />
+  </.modal>
+<% end %>
+
 <ul>
 
   <li>
@@ -36,6 +50,10 @@
 <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @post), class: "button" %></span> |
 <span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index) %></span>
 
+<div>
+  <span><%= live_patch "New Comment", to: Routes.post_show_path(@socket, :new_comment, @post.id) %></span>
+</div>
+
 <table>
   <thead>
     <tr>
@@ -51,7 +69,7 @@
 
         <td>
           <span><%= live_redirect "Show", to: Routes.comment_show_path(@socket, :show, comment) %></span>
-          <span><%= live_patch "Edit", to: Routes.comment_index_path(@socket, :edit, comment) %></span>
+          <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, @post.id, comment.id) %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
         </td>
       </tr>
