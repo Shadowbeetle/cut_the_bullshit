@@ -21,6 +21,7 @@
       <th>Description</th>
       <th>Url</th>
       <th>Author</th>
+      <th>Votes</th>
       <th></th>
     </tr>
   </thead>
@@ -31,6 +32,11 @@
         <td><%= post.description %></td>
         <td><%= post.url %></td>
         <td><%= post.user.username %></td>
+        <td>
+          <span><%= link "Up", to: "#", phx_click: "post_upvote", phx_value_id: post.id %></span>
+          <%= post.votes %>
+          <span><%= link "Down", to: "#", phx_click: "post_downvote", phx_value_id: post.id %></span>
+        </td>
 
         <td>
           <span><%= live_redirect "Show", to: Routes.post_show_path(@socket, :show, post) %></span>
