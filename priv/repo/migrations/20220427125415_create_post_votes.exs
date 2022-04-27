@@ -10,7 +10,6 @@ defmodule CutTheBullshit.Repo.Migrations.CreatePostVotes do
       timestamps()
     end
 
-    create index(:post_votes, [:user_id])
-    create index(:post_votes, [:post_id])
+    create unique_index(:post_votes, [:user_id, :post_id])
   end
 end

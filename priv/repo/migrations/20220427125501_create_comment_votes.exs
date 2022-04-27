@@ -10,7 +10,6 @@ defmodule CutTheBullshit.Repo.Migrations.CreateCommentVotes do
       timestamps()
     end
 
-    create index(:comment_votes, [:user_id])
-    create index(:comment_votes, [:comment_id])
+    create unique_index(:comment_votes, [:user_id, :comment_id])
   end
 end
