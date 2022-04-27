@@ -4,7 +4,7 @@ defmodule CutTheBullshit.VotesTest do
   alias CutTheBullshit.Votes
 
   describe "post_votes" do
-    alias CutTheBullshit.Votes.PostVote
+    alias CutTheBullshit.Posts.Vote
 
     import CutTheBullshit.VotesFixtures
 
@@ -58,7 +58,7 @@ defmodule CutTheBullshit.VotesTest do
   end
 
   describe "comment_votes" do
-    alias CutTheBullshit.Votes.CommentVote
+    alias CutTheBullshit.Comments.Vote
 
     import CutTheBullshit.VotesFixtures
 
@@ -89,7 +89,9 @@ defmodule CutTheBullshit.VotesTest do
       comment_vote = comment_vote_fixture()
       update_attrs = %{value: :down}
 
-      assert {:ok, %CommentVote{} = comment_vote} = Votes.update_comment_vote(comment_vote, update_attrs)
+      assert {:ok, %CommentVote{} = comment_vote} =
+               Votes.update_comment_vote(comment_vote, update_attrs)
+
       assert comment_vote.value == :down
     end
 

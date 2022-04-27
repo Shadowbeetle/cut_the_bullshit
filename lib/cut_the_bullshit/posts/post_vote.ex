@@ -1,4 +1,4 @@
-defmodule CutTheBullshit.Votes.PostVote do
+defmodule CutTheBullshit.Posts.Vote do
   use Ecto.Schema
   import Ecto.Changeset
 

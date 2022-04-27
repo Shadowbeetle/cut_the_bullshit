@@ -10,7 +10,7 @@ defmodule CutTheBullshit.Comments.Comment do
 
     belongs_to :user, CutTheBullshit.Accounts.User
     belongs_to :post, CutTheBullshit.Posts.Post
-    has_many :comment_votes, CutTheBullshit.Votes.CommentVote
+    has_many :comment_votes, CutTheBullshit.Comments.Vote
 
     timestamps()
   end

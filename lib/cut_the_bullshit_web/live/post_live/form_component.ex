@@ -2,7 +2,6 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
   use CutTheBullshitWeb, :live_component
 
   alias CutTheBullshit.Posts
-  alias CutTheBullshit.Votes
   require Logger
 
   @impl true
@@ -49,7 +48,7 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
     result =
       with {:ok, post} <- Posts.create_post(params),
            do:
-             Votes.create_post_vote(%{
+             Posts.create_vote(%{
                "post_id" => post.id,
                "user_id" => socket.assigns.current_user.id,
                "value" => :up

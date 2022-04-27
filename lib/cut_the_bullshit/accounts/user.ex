@@ -10,9 +10,9 @@ defmodule CutTheBullshit.Accounts.User do
     field :confirmed_at, :naive_datetime
 
     has_many :posts, CutTheBullshit.Posts.Post
+    has_many :post_votes, CutTheBullshit.Posts.Vote
     has_many :comments, CutTheBullshit.Comments.Comment
-    has_many :comment_votes, CutTheBullshit.Votes.CommentVote
-    has_many :post_votes, CutTheBullshit.Votes.PostVote
+    has_many :comment_votes, CutTheBullshit.Comments.Vote
 
     timestamps()
   end

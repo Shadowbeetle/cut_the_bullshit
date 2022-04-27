@@ -2,7 +2,6 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
   use CutTheBullshitWeb, :live_component
 
   alias CutTheBullshit.Comments
-  alias CutTheBullshit.Votes
 
   require Logger
 
@@ -57,7 +56,7 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
     result =
       with {:ok, comment} <- Comments.create_comment(params),
            do:
-             Votes.create_comment_vote(%{
+             Comments.create_vote(%{
                "comment_id" => comment.id,
                "user_id" => socket.assigns.current_user.id,
                "value" => :up
