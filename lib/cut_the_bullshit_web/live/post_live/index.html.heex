@@ -34,12 +34,16 @@
 
         <td>
           <span><%= live_redirect "Show", to: Routes.post_show_path(@socket, :show, post) %></span>
-          <span><%= live_patch "Edit", to: Routes.post_index_path(@socket, :edit, post) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: post.id, data: [confirm: "Are you sure?"] %></span>
+          <%= if is_same_user(@current_user, post.user) do %>
+            <span><%= live_patch "Edit", to: Routes.post_index_path(@socket, :edit, post) %></span>
+            <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: post.id, data: [confirm: "Are you sure?"] %></span>
+          <% end %>
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>
+<%= if is_logged_in(@current_user) do %>
+  <span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>
+<% end %>

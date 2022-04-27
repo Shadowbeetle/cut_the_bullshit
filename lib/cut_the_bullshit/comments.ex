@@ -21,7 +21,7 @@ defmodule CutTheBullshit.Comments do
 
   """
   def list_comments do
-    Repo.all(Comment)
+    Repo.all(Comment) |> Repo.preload(:user)
   end
 
   def list_comments_of_post(%Post{} = post) do
@@ -30,7 +30,7 @@ defmodule CutTheBullshit.Comments do
         where: c.post_id == ^post.id,
         order_by: [asc: :inserted_at]
 
-    Repo.all(query)
+    Repo.all(query) |> Repo.preload(:user)
   end
 
   @doc """
@@ -47,7 +47,7 @@ defmodule CutTheBullshit.Comments do
       ** (Ecto.NoResultsError)
 
   """
-  def get_comment!(id), do: Repo.get!(Comment, id)
+  def get_comment!(id), do: Repo.get!(Comment, id) |> Repo.preload(:user)
 
   @doc """
   Creates a comment.

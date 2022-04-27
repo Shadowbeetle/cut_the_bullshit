@@ -6,12 +6,9 @@ defmodule CutTheBullshitWeb.PostLive.Index do
 
   @impl true
   def mount(_params, session, socket) do
-    {
-      :ok,
-      assign_defaults(session, socket)
-      |> assign(:posts, list_posts())
-    }
-
+    {:ok,
+     assign_defaults(session, socket)
+     |> assign(:posts, list_posts())}
   end
 
   @impl true

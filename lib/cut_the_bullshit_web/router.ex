@@ -58,13 +58,19 @@ defmodule CutTheBullshitWeb.Router do
   end
 
   scope "/", CutTheBullshitWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser]
 
     live "/posts", PostLive.Index, :index
+
+    live "/posts/:id", PostLive.Show, :show
+  end
+
+  scope "/", CutTheBullshitWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
     live "/posts/new", PostLive.Index, :new
     live "/posts/:id/edit", PostLive.Index, :edit
 
-    live "/posts/:id", PostLive.Show, :show
     live "/posts/:id/show/edit", PostLive.Show, :edit
 
     live "/posts/:id/comments/new", PostLive.Show, :new_comment

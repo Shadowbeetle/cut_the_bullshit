@@ -35,7 +35,17 @@ defmodule CutTheBullshit.Posts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_post!(id), do: Repo.get!(Post, id) |> Repo.preload(:comments) |> Repo.preload(:user)
+  def get_post!(id) do
+    query =
+      from p in Post,
+        where: p.id == ^id,
+        left_join: user in assoc(p, :user),
+        left_join: comments in assoc(p, :comments),
+        left_join: comment_user in assoc(comments, :user),
+        preload: [comments: {comments, user: comment_user}, user: user]
+
+    Repo.one!(query)
+  end
 
   @doc """
   Creates a post.

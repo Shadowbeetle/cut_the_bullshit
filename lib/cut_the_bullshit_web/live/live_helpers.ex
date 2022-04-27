@@ -6,7 +6,7 @@ defmodule CutTheBullshitWeb.LiveHelpers do
 
   alias CutTheBullshit.Accounts
   alias CutTheBullshit.Accounts.User
-  alias CutTheBullshitWeb.Router.Helpers, as: Routes
+  require Logger
 
   @doc """
   Renders a live component inside a modal.
@@ -62,26 +62,34 @@ defmodule CutTheBullshitWeb.LiveHelpers do
     |> JS.hide(to: "#modal-content", transition: "fade-out-scale")
   end
 
-    def assign_defaults(session, socket) do
-    socket =
+  def assign_defaults(session, socket) do
+    _socket =
       assign_new(socket, :current_user, fn ->
         find_current_user(session)
       end)
 
-    case socket.assigns.current_user do
-      %User{} ->
-        socket
+    # case socket.assigns.current_user do
+    #   %User{} ->
+    #     socket
 
-      _other ->
-        socket
-        |> put_flash(:error, "You must log in to access this page.")
-        |> redirect(to: Routes.user_session_path(socket, :new))
-    end
+    #   _other ->
+    #     socket
+    #     |> put_flash(:error, "You must log in to access this page.")
+    #     |> redirect(to: Routes.user_session_path(socket, :new))
+    # end
   end
 
   defp find_current_user(session) do
     with user_token when not is_nil(user_token) <- session["user_token"],
          %User{} = user <- Accounts.get_user_by_session_token(user_token),
          do: user
+  end
+
+  def is_logged_in(current_user) do
+    not is_nil(current_user)
+  end
+
+  def is_same_user(user, current_user) do
+    user == current_user
   end
 end
