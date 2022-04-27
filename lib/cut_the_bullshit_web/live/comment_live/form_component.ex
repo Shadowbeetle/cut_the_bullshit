@@ -2,6 +2,7 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
   use CutTheBullshitWeb, :live_component
 
   alias CutTheBullshit.Comments
+  alias CutTheBullshit.Votes
 
   require Logger
 
@@ -17,7 +18,6 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"comment" => comment_params}, socket) do
-
     params =
       comment_params
       |> Map.put("user_id", socket.assigns.current_user.id)
@@ -54,7 +54,16 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
   end
 
   defp save_comment(socket, :new_comment, params) do
-    case Comments.create_comment(params) do
+    result =
+      with {:ok, comment} <- Comments.create_comment(params),
+           do:
+             Votes.create_comment_vote(%{
+               "comment_id" => comment.id,
+               "user_id" => socket.assigns.current_user.id,
+               "value" => :up
+             })
+
+    case result do
       {:ok, _comment} ->
         {:noreply,
          socket
