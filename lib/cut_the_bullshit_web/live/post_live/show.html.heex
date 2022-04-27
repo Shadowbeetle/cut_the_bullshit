@@ -60,7 +60,7 @@
 
 <div>
 <%= if is_logged_in(@current_user) do %>
-  <span><%= live_patch "New Comment", to: Routes.post_show_path(@socket, :new_comment, @post.id) %></span>
+  <span><%= live_patch "New Comment", to: Routes.post_show_path(@socket, :new_comment, @post.id), class: "button" %></span>
 <% end %>
 </div>
 
@@ -79,7 +79,7 @@
 
         <td>
           <%= if is_same_user(comment.user, @current_user) do %>
-            <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, @post.id, comment.id) %></span>
+            <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, @post.id, comment.id), class: "button" %></span>
             <span><%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
           <% end %>
         </td>
