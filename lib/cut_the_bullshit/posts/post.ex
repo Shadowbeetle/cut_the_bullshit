@@ -6,9 +6,11 @@ defmodule CutTheBullshit.Posts.Post do
     field :description, :string
     field :title, :string
     field :url, :string
+    field :votes, :integer
 
     belongs_to :user, CutTheBullshit.Accounts.User
     has_many :comments, CutTheBullshit.Comments.Comment
+    has_many :post_votes, CutTheBullshit.Votes.PostVote
 
     timestamps()
   end
@@ -16,7 +18,7 @@ defmodule CutTheBullshit.Posts.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :description, :url, :user_id])
+    |> cast(attrs, [:title, :votes, :description, :url, :user_id])
     |> validate_required([:title, :description, :url, :user_id])
   end
 end

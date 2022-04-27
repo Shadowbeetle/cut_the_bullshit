@@ -62,8 +62,6 @@ defmodule CutTheBullshit.Comments do
 
   """
   def create_comment(attrs \\ %{}) do
-    Logger.info("Creating comment: #{inspect(%Comment{} |> Comment.changeset(attrs))}")
-
     %Comment{}
     |> Comment.changeset(attrs)
     |> Repo.insert()

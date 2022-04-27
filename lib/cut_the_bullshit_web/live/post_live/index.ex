@@ -4,6 +4,8 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Posts.Post
 
+  require Logger
+
   @impl true
   def mount(_params, session, socket) do
     {:ok,

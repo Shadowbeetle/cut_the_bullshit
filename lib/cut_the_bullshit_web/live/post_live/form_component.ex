@@ -2,7 +2,7 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
   use CutTheBullshitWeb, :live_component
 
   alias CutTheBullshit.Posts
-
+  alias CutTheBullshit.Votes
   require Logger
 
   @impl true
@@ -18,6 +18,7 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
   @impl true
   def handle_event("validate", %{"post" => post_params}, socket) do
     params = Map.put(post_params, "user_id", socket.assigns.current_user.id)
+
     changeset =
       socket.assigns.post
       |> Posts.change_post(params)
@@ -45,8 +46,17 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
   end
 
   defp save_post(socket, :new, params) do
-    case Posts.create_post(params) do
-      {:ok, _post} ->
+    result =
+      with {:ok, post} <- Posts.create_post(params),
+           do:
+             Votes.create_post_vote(%{
+               "post_id" => post.id,
+               "user_id" => socket.assigns.current_user.id,
+               "value" => :up
+             })
+
+    case result do
+      {:ok, _vote} ->
         {:noreply,
          socket
          |> put_flash(:info, "Post created successfully")
