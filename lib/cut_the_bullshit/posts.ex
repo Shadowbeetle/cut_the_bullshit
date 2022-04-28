@@ -58,6 +58,15 @@ defmodule CutTheBullshit.Posts do
     Repo.one!(query)
   end
 
+  def get_comment_count(id) do
+    query =
+      from p in Post,
+        where: p.id == ^id,
+        left_join: comment in assoc(p, :comments)
+
+    Repo.aggregate(query, :count, :id)
+  end
+
   @doc """
   Creates a post.
 

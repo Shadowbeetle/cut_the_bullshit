@@ -17,6 +17,8 @@ defmodule CutTheBullshitWeb.PostLive.Show do
   def handle_params(%{"id" => id} = params, _, socket) do
     post = Posts.get_post!(id)
 
+    comment_count = Posts.get_comment_count(id)
+
     comment =
       case params do
         %{"comment_id" => comment_id} -> Comments.get_comment!(comment_id)
@@ -27,7 +29,8 @@ defmodule CutTheBullshitWeb.PostLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:post, post)
-     |> assign(:comment, comment)}
+     |> assign(:comment, comment)
+     |> assign(:comment_count, comment_count)}
   end
 
   @impl true
