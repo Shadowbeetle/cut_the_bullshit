@@ -35,9 +35,9 @@
         <td><%= post.user.username %></td>
         <td><%= post.comment_count %></td>
         <td>
-          <span><%= link "Up", to: "#", phx_click: "post_upvote", phx_value_id: post.id %></span>
+          <span><%= link "▲", to: "#", phx_click: "post_upvote", phx_value_id: post.id %></span>
           <%= post.votes %>
-          <span><%= link "Down", to: "#", phx_click: "post_downvote", phx_value_id: post.id %></span>
+          <span><%= link "▼", to: "#", phx_click: "post_downvote", phx_value_id: post.id %></span>
         </td>
 
         <td>
