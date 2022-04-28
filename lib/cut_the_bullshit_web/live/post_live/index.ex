@@ -47,7 +47,7 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   end
 
   defp list_posts(assigns) do
-    if Map.has_key?(assigns, :current_user) do
+    if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
       Posts.list_posts_with_users_upvotes(assigns.current_user.id)
     else
       Posts.list_posts()
