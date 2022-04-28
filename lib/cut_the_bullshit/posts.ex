@@ -10,6 +10,9 @@ defmodule CutTheBullshit.Posts do
 
   alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Posts.Vote
+  alias CutTheBullshit.Accounts.User
+
+  require Logger
 
   @doc """
   Returns the list of posts.
@@ -82,21 +85,7 @@ defmodule CutTheBullshit.Posts do
   def create_post(attrs \\ %{}) do
     Multi.new()
     |> Multi.insert(:post, Post.changeset(%Post{}, attrs))
-    |> Multi.insert(
-      :vote,
-      fn post_insert_result ->
-        case post_insert_result do
-          %{post: post} ->
-            Vote.changeset(%Vote{}, %{value: :up, post_id: post.id, user_id: post.user_id})
-
-          {:error, changeset} ->
-            {:error, changeset}
-
-          _ ->
-            raise "Unexpected result: #{inspect(post_insert_result)}"
-        end
-      end
-    )
+    |> create_vote(attrs["user_id"], :up)
     |> Repo.transaction()
   end
 
@@ -176,22 +165,25 @@ defmodule CutTheBullshit.Posts do
   """
   def get_vote!(id), do: Repo.get!(Vote, id)
 
-  @doc """
-  Creates a vote.
+  defp create_vote(transaction, user_id, vote_type) when vote_type in [:up, :down] do
+    Multi.insert(
+      transaction,
+      :vote,
+      fn post_insert_result ->
+        Logger.info("post_insert_result: #{inspect(post_insert_result)}")
 
-  ## Examples
+        case post_insert_result do
+          %{post: post} ->
+            Vote.changeset(%Vote{}, %{value: vote_type, post_id: post.id, user_id: user_id})
 
-      iex> create_vote(%{field: value})
-      {:ok, %Vote{}}
+          {:error, changeset} ->
+            {:error, changeset}
 
-      iex> create_vote(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_vote(attrs \\ %{}) do
-    %Vote{}
-    |> Vote.changeset(attrs)
-    |> Repo.insert()
+          _ ->
+            raise "Unexpected result: #{inspect(post_insert_result)}"
+        end
+      end
+    )
   end
 
   @doc """
@@ -239,5 +231,29 @@ defmodule CutTheBullshit.Posts do
   """
   def change_vote(%Vote{} = vote, attrs \\ %{}) do
     Vote.changeset(vote, attrs)
+  end
+
+  def vote_on_post(%Post{} = post, %User{} = current_user, vote_type)
+      when vote_type in [:up, :down] do
+    Logger.info("vote_on_post: #{inspect(post)}")
+
+    attrs =
+      case vote_type do
+        :up -> %{votes: post.votes + 1, id: post.id, user_id: post.user.id}
+        :down -> %{votes: post.votes - 1, id: post.id, user_id: post.user.id}
+      end
+
+    Logger.info("changeset: #{Post.vote_changeset(%Post{}, attrs) |> Map.get(:data) |> inspect}")
+
+    Multi.new()
+    |> Multi.update(:post, Post.vote_changeset(post, attrs))
+    |> create_vote(current_user.id, vote_type)
+    |> Repo.transaction()
+  end
+
+  def remove_vote_from_post(%Post{} = post) do
+    %Vote{}
+    |> Vote.changeset(%{value: :none, post_id: post.id, user_id: post.user_id})
+    |> Repo.insert()
   end
 end

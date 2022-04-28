@@ -22,4 +22,11 @@ defmodule CutTheBullshit.Posts.Post do
     |> cast(attrs, [:title, :votes, :description, :url, :user_id])
     |> validate_required([:title, :description, :url, :user_id])
   end
+
+  @doc false
+  def vote_changeset(post, attrs) do
+    post
+    |> cast(attrs, [:votes])
+    |> validate_required([:votes])
+  end
 end
