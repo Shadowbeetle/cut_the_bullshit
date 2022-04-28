@@ -14,8 +14,6 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
 
   @impl true
   def handle_event("upvote", _params, socket) do
-    Logger.info("votes: #{inspect(socket.assigns.post.votes)}")
-
     case Posts.vote_on_post(socket.assigns.post, socket.assigns.current_user, :up) do
       {:ok, %{post: post, vote: _}} ->
         {:noreply,

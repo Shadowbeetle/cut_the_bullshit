@@ -42,7 +42,7 @@ defmodule CutTheBullshit.Posts do
         left_join: comment in assoc(p, :comments),
         left_join: v in Vote,
         on: [user_id: ^current_user_id, post_id: p.id],
-        select: %{post: p, vote_of_current_user: v.value},
+        select_merge: %{vote_of_current_user: v.value},
         group_by: [p.id, user.id, v.value],
         select_merge: %{comment_count: count(comment.id)},
         preload: [user: user]
@@ -257,8 +257,6 @@ defmodule CutTheBullshit.Posts do
         :up -> %{votes: post.votes + 1, id: post.id, user_id: post.user.id}
         :down -> %{votes: post.votes - 1, id: post.id, user_id: post.user.id}
       end
-
-    Logger.info("changeset: #{Post.vote_changeset(%Post{}, attrs) |> Map.get(:data) |> inspect}")
 
     Multi.new()
     |> Multi.update(:post, Post.vote_changeset(post, attrs))

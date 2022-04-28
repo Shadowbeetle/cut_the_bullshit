@@ -8,8 +8,10 @@ defmodule CutTheBullshitWeb.PostLive.Index do
 
   @impl true
   def mount(_params, session, socket) do
+    socket = assign_defaults(session, socket)
+
     {:ok,
-     assign_defaults(session, socket)
+     socket
      |> assign(:posts, list_posts(socket.assigns))}
   end
 
@@ -45,8 +47,6 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   end
 
   defp list_posts(assigns) do
-    Logger.info("mounting with socket: #{inspect(assigns |> Map.keys())}")
-
     if Map.has_key?(assigns, :current_user) do
       Posts.list_posts_with_users_upvotes(assigns.current_user.id)
     else

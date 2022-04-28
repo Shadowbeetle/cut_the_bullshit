@@ -8,6 +8,7 @@ defmodule CutTheBullshit.Posts.Post do
     field :url, :string
     field :votes, :integer
     field :comment_count, :integer, virtual: true
+    field :vote_of_current_user, Ecto.Enum, values: [:up, :down], virtual: true
 
     belongs_to :user, CutTheBullshit.Accounts.User
     has_many :comments, CutTheBullshit.Comments.Comment
