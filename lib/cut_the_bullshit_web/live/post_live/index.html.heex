@@ -35,9 +35,12 @@
         <td><%= post.user.username %></td>
         <td><%= post.comment_count %></td>
         <td>
-          <span><%= link "▲", to: "#", phx_click: "post_upvote", phx_value_id: post.id %></span>
-          <%= post.votes %>
-          <span><%= link "▼", to: "#", phx_click: "post_downvote", phx_value_id: post.id %></span>
+          <.live_component
+            module={CutTheBullshitWeb.PostLive.VoteComponent}
+            id={"vote-#{post.id}"}
+            post={post}
+            current_user={@current_user}
+          />
         </td>
 
         <td>
