@@ -7,6 +7,7 @@ defmodule CutTheBullshit.Posts.Post do
     field :title, :string
     field :url, :string
     field :votes, :integer
+    field :comment_count, :integer, virtual: true
 
     belongs_to :user, CutTheBullshit.Accounts.User
     has_many :comments, CutTheBullshit.Comments.Comment

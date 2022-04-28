@@ -21,7 +21,15 @@ defmodule CutTheBullshit.Posts do
 
   """
   def list_posts do
-    Repo.all(Post) |> Repo.preload(:user)
+    query =
+      from p in Post,
+        left_join: user in assoc(p, :user),
+        left_join: comment in assoc(p, :comments),
+        group_by: [p.id, user.id],
+        select_merge: %{comment_count: count(comment.id)},
+        preload: [user: user]
+
+    Repo.all(query)
   end
 
   @doc """
