@@ -4,6 +4,8 @@ defmodule CutTheBullshit.Posts do
   """
 
   import Ecto.Query, warn: false
+  alias Ecto.Multi
+
   alias CutTheBullshit.Repo
 
   alias CutTheBullshit.Posts.Post
@@ -54,16 +56,31 @@ defmodule CutTheBullshit.Posts do
   ## Examples
 
       iex> create_post(%{field: value})
-      {:ok, %Post{}}
+      {:ok, post: %Post{}, vote: %Vote{}}
 
       iex> create_post(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   def create_post(attrs \\ %{}) do
-    %Post{}
-    |> Post.changeset(attrs)
-    |> Repo.insert()
+    Multi.new()
+    |> Multi.insert(:post, Post.changeset(%Post{}, attrs))
+    |> Multi.insert(
+      :vote,
+      fn post_insert_result ->
+        case post_insert_result do
+          %{post: post} ->
+            Vote.changeset(%Vote{}, %{value: :up, post_id: post.id, user_id: post.user_id})
+
+          {:error, changeset} ->
+            {:error, changeset}
+
+          _ ->
+            raise "Unexpected result: #{inspect(post_insert_result)}"
+        end
+      end
+    )
+    |> Repo.transaction()
   end
 
   @doc """

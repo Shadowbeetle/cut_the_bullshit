@@ -4,6 +4,8 @@ defmodule CutTheBullshit.Comments do
   """
 
   import Ecto.Query, warn: false
+  alias Ecto.Multi
+
   alias CutTheBullshit.Repo
 
   alias CutTheBullshit.Comments.Comment
@@ -63,9 +65,21 @@ defmodule CutTheBullshit.Comments do
 
   """
   def create_comment(attrs \\ %{}) do
-    %Comment{}
-    |> Comment.changeset(attrs)
-    |> Repo.insert()
+    Multi.new()
+    |> Multi.insert(:comment, Comment.changeset(%Comment{}, attrs))
+    |> Multi.insert(:vote, fn comment_insert_result ->
+      case comment_insert_result do
+        %{comment: comment} ->
+          Vote.changeset(%Vote{}, %{value: :up, comment_id: comment.id, user_id: comment.user_id})
+
+        {:error, changeset} ->
+          {:error, changeset}
+
+        _ ->
+          raise "Unexpected result: #{inspect(comment_insert_result)}"
+      end
+    end)
+    |> Repo.transaction()
   end
 
   @doc """

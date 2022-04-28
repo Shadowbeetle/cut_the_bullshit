@@ -53,17 +53,8 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
   end
 
   defp save_comment(socket, :new_comment, params) do
-    result =
-      with {:ok, comment} <- Comments.create_comment(params),
-           do:
-             Comments.create_vote(%{
-               "comment_id" => comment.id,
-               "user_id" => socket.assigns.current_user.id,
-               "value" => :up
-             })
-
-    case result do
-      {:ok, _comment} ->
+    case Comments.create_comment(params) do
+      {:ok, %{comment: _, vote: _}} ->
         {:noreply,
          socket
          |> put_flash(:info, "Comment created successfully")
