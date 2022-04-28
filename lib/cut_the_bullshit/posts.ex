@@ -35,6 +35,21 @@ defmodule CutTheBullshit.Posts do
     Repo.all(query)
   end
 
+  def list_posts_with_users_upvotes(current_user_id) do
+    query =
+      from p in Post,
+        left_join: user in assoc(p, :user),
+        left_join: comment in assoc(p, :comments),
+        left_join: v in Vote,
+        on: [user_id: ^current_user_id, post_id: p.id],
+        select: %{post: p, vote_of_current_user: v.value},
+        group_by: [p.id, user.id, v.value],
+        select_merge: %{comment_count: count(comment.id)},
+        preload: [user: user]
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single post.
 
