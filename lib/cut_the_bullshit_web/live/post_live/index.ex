@@ -10,7 +10,7 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   def mount(_params, session, socket) do
     {:ok,
      assign_defaults(session, socket)
-     |> assign(:posts, list_posts())}
+     |> assign(:posts, list_posts(socket.assigns))}
   end
 
   @impl true
@@ -41,10 +41,16 @@ defmodule CutTheBullshitWeb.PostLive.Index do
     post = Posts.get_post!(id)
     {:ok, _} = Posts.delete_post(post)
 
-    {:noreply, assign(socket, :posts, list_posts())}
+    {:noreply, assign(socket, :posts, list_posts(socket.assigns.current_user))}
   end
 
-  defp list_posts do
-    Posts.list_posts()
+  defp list_posts(assigns) do
+    Logger.info("mounting with socket: #{inspect(assigns |> Map.keys())}")
+
+    if Map.has_key?(assigns, :current_user) do
+      Posts.list_posts_with_users_upvotes(assigns.current_user.id)
+    else
+      Posts.list_posts()
+    end
   end
 end
