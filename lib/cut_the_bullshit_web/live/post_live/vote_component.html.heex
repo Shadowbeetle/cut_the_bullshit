@@ -1,5 +1,9 @@
 <span>
-  <span><%= link "▲", to: "#", phx_click: "upvote", phx_value_id: @post.id, phx_target: @myself %></span>
+  <span><%= link "▲", to: "#", phx_click: "vote", phx_value_vote_type: :up,
+              phx_target: @myself, style: get_up_arrow_style(@post.vote_of_current_user) %></span>
+    
     <%= @post.votes %>
-  <span><%= link "▼", to: "#", phx_click: "downvote", phx_value_id: @post.id, phx_target: @myself %></span>
+  
+  <span><%= link "▼", to: "#", phx_click: "vote", phx_value_vote_type: :down, 
+              phx_target: @myself, style: get_down_arrow_style(@post.vote_of_current_user)%></span>
 </span>
