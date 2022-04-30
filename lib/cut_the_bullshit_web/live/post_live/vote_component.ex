@@ -3,28 +3,38 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
 
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Posts.Post
+  alias CutTheBullshit.Posts.Vote
   alias CutTheBullshit.Accounts.User
 
   require Logger
 
   @impl true
   def update(assigns, socket) do
+    vote_of_current_user =
+      if is_nil(assigns.post.vote_of_current_user) do
+        %Vote{}
+      else
+        assigns.post.vote_of_current_user
+      end
+
+    assigns = put_in(assigns.post.vote_of_current_user, vote_of_current_user)
+
     {:ok,
      socket
      |> assign(assigns)}
   end
 
   @impl true
-  def handle_event("vote", %{"vote-type" => vote_type} = _params, socket) do
+  def handle_event("vote", %{"vote-type" => clicked_vote} = _params, socket) do
     %{post: post, current_user: current_user} = socket.assigns
     %{vote_of_current_user: vote_of_current_user} = post
-    vote_type = String.to_atom(vote_type)
+    clicked_vote = String.to_atom(clicked_vote)
 
     result =
-      case vote_of_current_user do
-        nil -> save_vote(:new, vote_type, post, current_user)
-        :up -> save_vote(:change, vote_type, post, current_user)
-        :down -> save_vote(:change, vote_type, post, current_user)
+      case vote_of_current_user.value do
+        nil -> save_vote(:new, post, current_user, clicked_vote)
+        :up -> save_vote(:change, post, current_user, clicked_vote)
+        :down -> save_vote(:change, post, current_user, clicked_vote)
       end
 
     case result do
@@ -38,8 +48,21 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
     end
   end
 
-  def save_vote(:new, vote_type, %Post{} = post, %User{} = current_user) do
-    Posts.vote_on_post(post, current_user, vote_type)
+  def save_vote(:new, %Post{} = post, %User{} = current_user, clicked_vote) do
+    Posts.vote_on_post(post, current_user, clicked_vote)
+  end
+
+  def save_vote(:change, %Post{} = post, %User{} = current_user, clicked_vote) do
+    current_vote_value = post.vote_of_current_user.value
+
+    Logger.info(
+      "changing vote, clicked vote: #{clicked_vote} current vote: #{current_vote_value}"
+    )
+
+    cond do
+      clicked_vote == current_vote_value ->
+        Posts.remove_vote_from_post(post, post.vote_of_current_user)
+    end
   end
 
   defp get_up_arrow_style(vote_of_current_user) do

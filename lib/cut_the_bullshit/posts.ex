@@ -114,6 +114,16 @@ defmodule CutTheBullshit.Posts do
     end
   end
 
+  defp add_empty_vote_to_post(transaction_result) do
+    case transaction_result do
+      {:ok, %{post: post, vote: _}} ->
+        {:ok, Map.put(post, :vote_of_current_user, %Vote{})}
+
+      other ->
+        other
+    end
+  end
+
   @doc """
   Updates a post.
 
@@ -195,8 +205,6 @@ defmodule CutTheBullshit.Posts do
       transaction,
       name,
       fn post_insert_result ->
-        Logger.info("post_insert_result: #{inspect(post_insert_result)}")
-
         case post_insert_result do
           %{post: post} ->
             Vote.changeset(%Vote{}, %{value: vote_type, post_id: post.id, user_id: user_id})
@@ -284,5 +292,6 @@ defmodule CutTheBullshit.Posts do
     |> Multi.update(:post, Post.vote_changeset(post, attrs))
     |> Multi.delete(:vote, vote)
     |> Repo.transaction()
+    |> add_empty_vote_to_post()
   end
 end
