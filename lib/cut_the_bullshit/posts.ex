@@ -273,24 +273,16 @@ defmodule CutTheBullshit.Posts do
     |> add_vote_to_post()
   end
 
-  def remove_vote_from_post(%Post{} = post, %User{} = current_user, vote_type_to_be_removed)
-      when vote_type_to_be_removed in [:up, :down] do
+  def remove_vote_from_post(%Post{} = post, %Vote{} = vote) do
     attrs =
-      case vote_type_to_be_removed do
+      case vote.value do
         :up -> %{votes: post.votes - 1, id: post.id, user_id: post.user.id}
         :down -> %{votes: post.votes + 1, id: post.id, user_id: post.user.id}
       end
 
-    vote = %Vote{value: vote_type_to_be_removed, post_id: post.id, user_id: current_user.id}
-
-    delete_query =
-      from v in Vote,
-        where: v.user_id == ^current_user.id and v.post_id == ^post.id
-
-    # TODO: this does not work with a query. Either pass the whole vote, or find a workaround
     Multi.new()
     |> Multi.update(:post, Post.vote_changeset(post, attrs))
-    |> Multi.delete(:vote, delete_query)
+    |> Multi.delete(:vote, vote)
     |> Repo.transaction()
   end
 end
