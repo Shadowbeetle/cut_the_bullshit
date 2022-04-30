@@ -46,7 +46,7 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
 
   defp save_post(socket, :new, params) do
     case Posts.create_post(params) do
-      {:ok, %{post: _, vote: _}} ->
+      {:ok, _post} ->
         {:noreply,
          socket
          |> put_flash(:info, "Post created successfully")

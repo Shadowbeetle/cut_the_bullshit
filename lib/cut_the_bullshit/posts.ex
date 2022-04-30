@@ -40,12 +40,11 @@ defmodule CutTheBullshit.Posts do
       from p in Post,
         left_join: user in assoc(p, :user),
         left_join: comment in assoc(p, :comments),
-        left_join: v in Vote,
+        left_join: vote in Vote,
         on: [user_id: ^current_user_id, post_id: p.id],
-        select_merge: %{vote_of_current_user: v.value},
-        group_by: [p.id, user.id, v.value],
+        group_by: [p.id, user.id, vote.id],
         select_merge: %{comment_count: count(comment.id)},
-        preload: [user: user]
+        preload: [user: user, vote_of_current_user: vote]
 
     Repo.all(query)
   end
@@ -100,8 +99,19 @@ defmodule CutTheBullshit.Posts do
   def create_post(attrs \\ %{}) do
     Multi.new()
     |> Multi.insert(:post, Post.changeset(%Post{}, attrs))
-    |> create_vote(attrs["user_id"], :up)
+    |> create_vote(:vote, attrs["user_id"], :up)
     |> Repo.transaction()
+    |> add_vote_to_post()
+  end
+
+  defp add_vote_to_post(transaction_result) do
+    case transaction_result do
+      {:ok, %{post: post, vote: vote}} ->
+        {:ok, Map.put(post, :vote_of_current_user, vote)}
+
+      other ->
+        other
+    end
   end
 
   @doc """
@@ -180,10 +190,10 @@ defmodule CutTheBullshit.Posts do
   """
   def get_vote!(id), do: Repo.get!(Vote, id)
 
-  defp create_vote(transaction, user_id, vote_type) when vote_type in [:up, :down] do
+  defp create_vote(transaction, name, user_id, vote_type) when vote_type in [:up, :down] do
     Multi.insert(
       transaction,
-      :vote,
+      name,
       fn post_insert_result ->
         Logger.info("post_insert_result: #{inspect(post_insert_result)}")
 
@@ -250,8 +260,6 @@ defmodule CutTheBullshit.Posts do
 
   def vote_on_post(%Post{} = post, %User{} = current_user, vote_type)
       when vote_type in [:up, :down] do
-    Logger.info("vote_on_post: #{inspect(post)}")
-
     attrs =
       case vote_type do
         :up -> %{votes: post.votes + 1, id: post.id, user_id: post.user.id}
@@ -260,13 +268,29 @@ defmodule CutTheBullshit.Posts do
 
     Multi.new()
     |> Multi.update(:post, Post.vote_changeset(post, attrs))
-    |> create_vote(current_user.id, vote_type)
+    |> create_vote(:vote, current_user.id, vote_type)
     |> Repo.transaction()
+    |> add_vote_to_post()
   end
 
-  def remove_vote_from_post(%Post{} = post) do
-    %Vote{}
-    |> Vote.changeset(%{value: :none, post_id: post.id, user_id: post.user_id})
-    |> Repo.insert()
+  def remove_vote_from_post(%Post{} = post, %User{} = current_user, vote_type_to_be_removed)
+      when vote_type_to_be_removed in [:up, :down] do
+    attrs =
+      case vote_type_to_be_removed do
+        :up -> %{votes: post.votes - 1, id: post.id, user_id: post.user.id}
+        :down -> %{votes: post.votes + 1, id: post.id, user_id: post.user.id}
+      end
+
+    vote = %Vote{value: vote_type_to_be_removed, post_id: post.id, user_id: current_user.id}
+
+    delete_query =
+      from v in Vote,
+        where: v.user_id == ^current_user.id and v.post_id == ^post.id
+
+    # TODO: this does not work with a query. Either pass the whole vote, or find a workaround
+    Multi.new()
+    |> Multi.update(:post, Post.vote_changeset(post, attrs))
+    |> Multi.delete(:vote, delete_query)
+    |> Repo.transaction()
   end
 end

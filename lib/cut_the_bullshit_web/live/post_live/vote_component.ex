@@ -19,10 +19,10 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
            socket.assigns.current_user,
            vote_type |> String.to_atom()
          ) do
-      {:ok, %{post: post, vote: vote}} ->
+      {:ok, post} ->
         {:noreply,
          socket
-         |> assign(post: post |> Map.put(:vote_of_current_user, vote.value))}
+         |> assign(post: post)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
