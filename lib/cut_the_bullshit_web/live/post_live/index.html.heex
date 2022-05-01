@@ -23,7 +23,6 @@
       <th>Author</th>
       <th>Comments</th>
       <th>Current User's Vote</th>
-      <th>Votes</th>
       <th></th>
     </tr>
   </thead>
@@ -35,9 +34,6 @@
         <td><%= post.url %></td>
         <td><%= post.user.username %></td>
         <td><%= post.comment_count %></td>
-        <td>
-            <%= get_vote_value_of_current_user(post) |> Atom.to_string %>
-        </td>
         <td>
           <.live_component
             module={CutTheBullshitWeb.PostLive.VoteComponent}

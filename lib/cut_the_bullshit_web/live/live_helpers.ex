@@ -83,12 +83,4 @@ defmodule CutTheBullshitWeb.LiveHelpers do
   def is_same_user(user, current_user) do
     user == current_user
   end
-
-  def get_vote_value_of_current_user(%Post{} = post) do
-    if is_nil(post.vote_of_current_user) do
-      nil
-    else
-      post.vote_of_current_user |> Map.get(:value)
-    end
-  end
 end
