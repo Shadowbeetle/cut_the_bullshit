@@ -58,8 +58,8 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
     end
   end
 
-  defp get_up_arrow_style(%Post{} = post) do
-    vote_of_current_user = get_vote_value_of_current_user(post)
+  defp get_up_arrow_style(content) do
+    vote_of_current_user = get_vote_value_of_current_user(content)
 
     case vote_of_current_user do
       :up -> "color: red"
@@ -68,8 +68,8 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
     end
   end
 
-  defp get_down_arrow_style(%Post{} = post) do
-    vote_of_current_user = get_vote_value_of_current_user(post)
+  defp get_down_arrow_style(content) do
+    vote_of_current_user = get_vote_value_of_current_user(content)
 
     case vote_of_current_user do
       :down -> "color: red"
@@ -78,7 +78,7 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
     end
   end
 
-  defp get_vote_value_of_current_user(%Post{} = post) do
-    get_in(post, [Access.key(:vote_of_current_user), Access.key(:value)])
+  defp get_vote_value_of_current_user(content) do
+    get_in(content, [Access.key(:vote_of_current_user), Access.key(:value)])
   end
 end

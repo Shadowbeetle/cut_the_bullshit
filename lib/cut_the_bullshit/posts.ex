@@ -30,12 +30,13 @@ defmodule CutTheBullshit.Posts do
         left_join: comment in assoc(p, :comments),
         group_by: [p.id, user.id],
         select_merge: %{comment_count: count(comment.id)},
-        preload: [user: user]
+        preload: [user: user],
+        order_by: [desc: :inserted_at]
 
     Repo.all(query)
   end
 
-  def list_posts_with_users_upvotes(%User{} = current_user) do
+  def list_posts(%User{} = current_user) do
     query =
       from p in Post,
         left_join: user in assoc(p, :user),
@@ -44,7 +45,8 @@ defmodule CutTheBullshit.Posts do
         on: [user_id: ^current_user.id, post_id: p.id],
         group_by: [p.id, user.id, vote.id],
         select_merge: %{comment_count: count(comment.id)},
-        preload: [user: user, vote_of_current_user: vote]
+        preload: [user: user, vote_of_current_user: vote],
+        order_by: [desc: :inserted_at]
 
     Repo.all(query)
   end

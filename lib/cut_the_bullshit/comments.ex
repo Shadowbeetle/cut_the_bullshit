@@ -11,6 +11,7 @@ defmodule CutTheBullshit.Comments do
   alias CutTheBullshit.Comments.Comment
   alias CutTheBullshit.Comments.Vote
   alias CutTheBullshit.Posts.Post
+  alias CutTheBullshit.Accounts.User
 
   require Logger
 
@@ -31,9 +32,23 @@ defmodule CutTheBullshit.Comments do
     query =
       from c in Comment,
         where: c.post_id == ^post.id,
-        order_by: [asc: :inserted_at]
+        order_by: [desc: :inserted_at]
 
     Repo.all(query) |> Repo.preload(:user)
+  end
+
+  def list_comments_of_post(%Post{} = post, %User{} = current_user) do
+    query =
+      from c in Comment,
+        where: c.post_id == ^post.id,
+        left_join: user in assoc(c, :user),
+        left_join: vote in Vote,
+        on: [user_id: ^current_user.id, comment_id: c.id],
+        group_by: [c.id, vote.id],
+        preload: [user: user, vote_of_current_user: vote],
+        order_by: [asc: :inserted_at]
+
+    Repo.all(query)
   end
 
   @doc """
