@@ -10,6 +10,7 @@ defmodule CutTheBullshit.Posts do
 
   alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Posts.Vote
+  alias CutTheBullshit.Comments.Vote, as: CommentVote
   alias CutTheBullshit.Accounts.User
 
   require Logger
@@ -73,6 +74,23 @@ defmodule CutTheBullshit.Posts do
         left_join: comments in assoc(p, :comments),
         left_join: comment_user in assoc(comments, :user),
         preload: [comments: {comments, user: comment_user}, user: user]
+
+    Repo.one!(query)
+  end
+
+  def get_post!(id, %User{} = current_user) do
+    query =
+      from p in Post,
+        where: p.id == ^id,
+        left_join: user in assoc(p, :user),
+        left_join: comments in assoc(p, :comments),
+        left_join: comment_user in assoc(comments, :user),
+        left_join: vote in CommentVote,
+        on: [user_id: ^current_user.id, comment_id: comments.id],
+        preload: [
+          comments: {comments, user: comment_user, vote_of_current_user: vote},
+          user: user
+        ]
 
     Repo.one!(query)
   end

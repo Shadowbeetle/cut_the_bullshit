@@ -4,6 +4,9 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Posts.Vote
+  alias CutTheBullshit.Comments
+  alias CutTheBullshit.Comments.Comment
+  alias CutTheBullshit.Comments.Vote
   alias CutTheBullshit.Accounts.User
 
   require Logger
@@ -18,6 +21,8 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
       end
 
     assigns = put_in(assigns.content.vote_of_current_user, vote_of_current_user)
+
+    Logger.info("content: #{assigns.content |> inspect}")
 
     {:ok,
      socket
@@ -46,6 +51,10 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
 
   def save_vote(:new, %Post{} = post, %User{} = current_user, clicked_vote) do
     Posts.vote_on_post(post, current_user, clicked_vote)
+  end
+
+  def save_vote(:new, %Comment{} = comment, %User{} = current_user, clicked_vote) do
+    Comments.vote_on_comment(comment, current_user, clicked_vote)
   end
 
   def save_vote(:change, %Post{} = post, clicked_vote) do

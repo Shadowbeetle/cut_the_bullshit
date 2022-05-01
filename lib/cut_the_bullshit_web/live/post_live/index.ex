@@ -15,6 +15,8 @@ defmodule CutTheBullshitWeb.PostLive.Index do
      |> assign(:posts, list_posts(socket.assigns))}
   end
 
+  # TODO: add vote component to show post
+
   @impl true
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}

@@ -44,7 +44,7 @@ defmodule CutTheBullshit.Comments do
         left_join: user in assoc(c, :user),
         left_join: vote in Vote,
         on: [user_id: ^current_user.id, comment_id: c.id],
-        group_by: [c.id, vote.id],
+        group_by: [c.id, user.id, vote.id],
         preload: [user: user, vote_of_current_user: vote],
         order_by: [asc: :inserted_at]
 

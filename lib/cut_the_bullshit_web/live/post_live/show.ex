@@ -15,7 +15,7 @@ defmodule CutTheBullshitWeb.PostLive.Show do
   @impl true
 
   def handle_params(%{"id" => id} = params, _, socket) do
-    post = Posts.get_post!(id)
+    post = get_post!(id, socket.assigns)
 
     comment_count = Posts.get_comment_count(id)
 
@@ -49,4 +49,12 @@ defmodule CutTheBullshitWeb.PostLive.Show do
   defp page_title(:edit_comment), do: "Show Post"
   defp page_title(:new_comment), do: "Show Post"
   defp page_title(:edit), do: "Edit Post"
+
+  defp get_post!(post_id, assigns) do
+    if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
+      Posts.get_post!(post_id, assigns.current_user)
+    else
+      Posts.get_post!(post_id)
+    end
+  end
 end
