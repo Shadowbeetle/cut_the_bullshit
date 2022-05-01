@@ -97,6 +97,26 @@ defmodule CutTheBullshit.Comments do
     |> Repo.transaction()
   end
 
+  defp add_vote_to_comment_transaction(transaction_result) do
+    case transaction_result do
+      {:ok, %{comment: comment, vote: vote}} ->
+        {:ok, Map.put(comment, :vote_of_current_user, vote)}
+
+      other ->
+        other
+    end
+  end
+
+  defp add_empty_vote_to_comment_transaction(transaction_result) do
+    case transaction_result do
+      {:ok, %{comment: comment, vote: _}} ->
+        {:ok, Map.put(comment, :vote_of_current_user, %Vote{})}
+
+      other ->
+        other
+    end
+  end
+
   @doc """
   Updates a comment.
 
@@ -173,6 +193,25 @@ defmodule CutTheBullshit.Comments do
   """
   def get_vote!(id), do: Repo.get!(Vote, id)
 
+  defp create_vote(transaction, name, user_id, vote_type) when vote_type in [:up, :down] do
+    Multi.insert(
+      transaction,
+      name,
+      fn comment_insert_result ->
+        case comment_insert_result do
+          %{comment: comment} ->
+            Vote.changeset(%Vote{}, %{value: vote_type, comment_id: comment.id, user_id: user_id})
+
+          {:error, changeset} ->
+            {:error, changeset}
+
+          _ ->
+            raise "Unexpected result: #{inspect(comment_insert_result)}"
+        end
+      end
+    )
+  end
+
   @doc """
   Creates a vote.
 
@@ -236,5 +275,48 @@ defmodule CutTheBullshit.Comments do
   """
   def change_vote(%Vote{} = vote, attrs \\ %{}) do
     Vote.changeset(vote, attrs)
+  end
+
+  def vote_on_comment(%Comment{} = comment, %User{} = current_user, vote_type)
+      when vote_type in [:up, :down] do
+    attrs =
+      case vote_type do
+        :up -> %{votes: comment.votes + 1, id: comment.id, user_id: comment.user.id}
+        :down -> %{votes: comment.votes - 1, id: comment.id, user_id: comment.user.id}
+      end
+
+    Multi.new()
+    |> Multi.update(:comment, Comment.vote_changeset(comment, attrs))
+    |> create_vote(:vote, current_user.id, vote_type)
+    |> Repo.transaction()
+    |> add_vote_to_comment_transaction()
+  end
+
+  def remove_vote_from_comment(%Comment{} = comment, %Vote{} = vote) do
+    attrs =
+      case vote.value do
+        :up -> %{votes: comment.votes - 1, id: comment.id, user_id: comment.user.id}
+        :down -> %{votes: comment.votes + 1, id: comment.id, user_id: comment.user.id}
+      end
+
+    Multi.new()
+    |> Multi.update(:comment, Comment.vote_changeset(comment, attrs))
+    |> Multi.delete(:vote, vote)
+    |> Repo.transaction()
+    |> add_empty_vote_to_comment_transaction()
+  end
+
+  def change_vote_on_comment(%Comment{} = comment, %Vote{} = vote, new_vote_type) do
+    attrs =
+      case new_vote_type do
+        :up -> %{votes: comment.votes + 2, id: comment.id, user_id: comment.user.id}
+        :down -> %{votes: comment.votes - 2, id: comment.id, user_id: comment.user.id}
+      end
+
+    Multi.new()
+    |> Multi.update(:comment, Comment.vote_changeset(comment, attrs))
+    |> Multi.update(:vote, Vote.changeset(vote, %{value: new_vote_type}))
+    |> Repo.transaction()
+    |> add_vote_to_comment_transaction()
   end
 end

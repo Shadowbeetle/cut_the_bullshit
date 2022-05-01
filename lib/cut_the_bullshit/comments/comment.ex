@@ -22,4 +22,10 @@ defmodule CutTheBullshit.Comments.Comment do
     |> cast(attrs, [:text, :votes, :user_id, :post_id])
     |> validate_required([:text, :user_id, :post_id])
   end
+
+  def vote_changeset(comment, attrs) do
+    comment
+    |> cast(attrs, [:votes])
+    |> validate_required([:votes])
+  end
 end
