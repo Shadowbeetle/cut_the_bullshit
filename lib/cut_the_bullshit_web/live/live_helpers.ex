@@ -6,7 +6,6 @@ defmodule CutTheBullshitWeb.LiveHelpers do
 
   alias CutTheBullshit.Accounts
   alias CutTheBullshit.Accounts.User
-  alias CutTheBullshit.Posts.Post
   require Logger
 
   @doc """

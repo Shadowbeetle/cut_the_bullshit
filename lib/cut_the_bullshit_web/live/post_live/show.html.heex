@@ -30,6 +30,10 @@
 <% end %>
 
 <ul>
+  <li>
+    <strong>ID:</strong>
+    <%= @post.id %>
+  </li>
 
   <li>
     <strong>Title:</strong>
@@ -58,7 +62,13 @@
 
   <li>
     <strong>Votes:</strong>
-    <%= @post.votes %>
+    <%= Logger.info("html post: #{inspect(@post.vote_of_current_user)}") %>
+    <.live_component
+      module={CutTheBullshitWeb.PostLive.VoteComponent}
+      id={"vote-#{@post.id}"}
+      content={@post}
+      current_user={@current_user}
+    />
   </li>
 
 </ul>

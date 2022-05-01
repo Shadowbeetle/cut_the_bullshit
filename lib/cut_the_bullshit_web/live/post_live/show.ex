@@ -15,7 +15,10 @@ defmodule CutTheBullshitWeb.PostLive.Show do
   @impl true
 
   def handle_params(%{"id" => id} = params, _, socket) do
+    Logger.info("handle_params: id = #{id}")
     post = get_post!(id, socket.assigns)
+
+    Logger.info("handle_params: post = #{post |> inspect}")
 
     comment_count = Posts.get_comment_count(id)
 
