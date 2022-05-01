@@ -89,6 +89,14 @@
         <td><%= comment.text %></td>
         <td><%= comment.user.username %></td>
         <td><%= comment.votes %></td>
+        <td>
+          <.live_component
+            module={CutTheBullshitWeb.PostLive.VoteComponent}
+            id={"vote-#{comment.id}"}
+            content={comment}
+            current_user={@current_user}
+          />
+        </td>
 
         <td>
           <%= if is_same_user(comment.user, @current_user) do %>

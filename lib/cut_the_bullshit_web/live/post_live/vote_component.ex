@@ -11,13 +11,13 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
   @impl true
   def update(assigns, socket) do
     vote_of_current_user =
-      if is_nil(assigns.post.vote_of_current_user) do
+      if is_nil(assigns.content.vote_of_current_user) do
         %Vote{}
       else
-        assigns.post.vote_of_current_user
+        assigns.content.vote_of_current_user
       end
 
-    assigns = put_in(assigns.post.vote_of_current_user, vote_of_current_user)
+    assigns = put_in(assigns.content.vote_of_current_user, vote_of_current_user)
 
     {:ok,
      socket
@@ -26,21 +26,21 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
 
   @impl true
   def handle_event("vote", %{"vote-type" => clicked_vote} = _params, socket) do
-    %{post: post, current_user: current_user} = socket.assigns
-    %{vote_of_current_user: vote_of_current_user} = post
+    %{content: content, current_user: current_user} = socket.assigns
+    %{vote_of_current_user: vote_of_current_user} = content
     clicked_vote = String.to_atom(clicked_vote)
 
     result =
       case vote_of_current_user.value do
-        nil -> save_vote(:new, post, current_user, clicked_vote)
-        _ -> save_vote(:change, post, clicked_vote)
+        nil -> save_vote(:new, content, current_user, clicked_vote)
+        _ -> save_vote(:change, content, clicked_vote)
       end
 
     case result do
-      {:ok, post} ->
+      {:ok, content} ->
         {:noreply,
          socket
-         |> assign(post: post)}
+         |> assign(content: content)}
     end
   end
 

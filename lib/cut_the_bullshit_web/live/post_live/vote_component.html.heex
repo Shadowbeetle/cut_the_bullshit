@@ -1,9 +1,9 @@
 <span>
   <span><%= link "▲", to: "#", phx_click: "vote", phx_value_vote_type: :up, phx_target: @myself,
-            style: get_up_arrow_style(@post) %></span>
+            style: get_up_arrow_style(@content) %></span>
     
-    <%= @post.votes %>
+    <%= @content.votes %>
   
   <span><%= link "▼", to: "#", phx_click: "vote", phx_value_vote_type: :down, phx_target: @myself,
-            style: get_down_arrow_style(@post) %></span>
+            style: get_down_arrow_style(@content) %></span>
 </span>

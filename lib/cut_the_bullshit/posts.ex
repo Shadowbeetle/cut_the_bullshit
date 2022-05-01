@@ -101,10 +101,10 @@ defmodule CutTheBullshit.Posts do
     |> Multi.insert(:post, Post.changeset(%Post{}, attrs))
     |> create_vote(:vote, attrs["user_id"], :up)
     |> Repo.transaction()
-    |> add_vote_to_post()
+    |> add_vote_to_post_transaction()
   end
 
-  defp add_vote_to_post(transaction_result) do
+  defp add_vote_to_post_transaction(transaction_result) do
     case transaction_result do
       {:ok, %{post: post, vote: vote}} ->
         {:ok, Map.put(post, :vote_of_current_user, vote)}
@@ -114,7 +114,7 @@ defmodule CutTheBullshit.Posts do
     end
   end
 
-  defp add_empty_vote_to_post(transaction_result) do
+  defp add_empty_vote_to_post_transaction(transaction_result) do
     case transaction_result do
       {:ok, %{post: post, vote: _}} ->
         {:ok, Map.put(post, :vote_of_current_user, %Vote{})}
@@ -278,7 +278,7 @@ defmodule CutTheBullshit.Posts do
     |> Multi.update(:post, Post.vote_changeset(post, attrs))
     |> create_vote(:vote, current_user.id, vote_type)
     |> Repo.transaction()
-    |> add_vote_to_post()
+    |> add_vote_to_post_transaction()
   end
 
   def remove_vote_from_post(%Post{} = post, %Vote{} = vote) do
@@ -292,7 +292,7 @@ defmodule CutTheBullshit.Posts do
     |> Multi.update(:post, Post.vote_changeset(post, attrs))
     |> Multi.delete(:vote, vote)
     |> Repo.transaction()
-    |> add_empty_vote_to_post()
+    |> add_empty_vote_to_post_transaction()
   end
 
   def change_vote_on_post(%Post{} = post, %Vote{} = vote, new_vote_type) do
@@ -306,6 +306,6 @@ defmodule CutTheBullshit.Posts do
     |> Multi.update(:post, Post.vote_changeset(post, attrs))
     |> Multi.update(:vote, Vote.changeset(vote, %{value: new_vote_type}))
     |> Repo.transaction()
-    |> add_vote_to_post()
+    |> add_vote_to_post_transaction()
   end
 end
