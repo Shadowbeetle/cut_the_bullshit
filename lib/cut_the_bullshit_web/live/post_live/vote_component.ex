@@ -22,8 +22,6 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
 
     assigns = put_in(assigns.content.vote_of_current_user, vote_of_current_user)
 
-    Logger.info("content: #{assigns.content |> inspect}")
-
     {:ok,
      socket
      |> assign(assigns)}
@@ -49,6 +47,7 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
     end
   end
 
+
   def save_vote(:new, %Post{} = post, %User{} = current_user, clicked_vote) do
     Posts.vote_on_post(post, current_user, clicked_vote)
   end
@@ -64,6 +63,16 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
       Posts.remove_vote_from_post(post, post.vote_of_current_user)
     else
       Posts.change_vote_on_post(post, post.vote_of_current_user, clicked_vote)
+    end
+  end
+
+  def save_vote(:change, %Comment{} = comment, clicked_vote) do
+    current_vote_value = comment.vote_of_current_user.value
+
+    if clicked_vote == current_vote_value do
+      Comments.remove_vote_from_comment(comment, comment.vote_of_current_user)
+    else
+      Comments.change_vote_on_comment(comment, comment.vote_of_current_user, clicked_vote)
     end
   end
 
