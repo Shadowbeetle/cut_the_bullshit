@@ -33,8 +33,7 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
     result =
       case vote_of_current_user.value do
         nil -> save_vote(:new, post, current_user, clicked_vote)
-        :up -> save_vote(:change, post, current_user, clicked_vote)
-        :down -> save_vote(:change, post, current_user, clicked_vote)
+        _ -> save_vote(:change, post, clicked_vote)
       end
 
     case result do
@@ -42,9 +41,6 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
         {:noreply,
          socket
          |> assign(post: post)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
     end
   end
 
@@ -52,16 +48,13 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
     Posts.vote_on_post(post, current_user, clicked_vote)
   end
 
-  def save_vote(:change, %Post{} = post, %User{} = current_user, clicked_vote) do
+  def save_vote(:change, %Post{} = post, clicked_vote) do
     current_vote_value = post.vote_of_current_user.value
 
-    Logger.info(
-      "changing vote, clicked vote: #{clicked_vote} current vote: #{current_vote_value}"
-    )
-
-    cond do
-      clicked_vote == current_vote_value ->
-        Posts.remove_vote_from_post(post, post.vote_of_current_user)
+    if clicked_vote == current_vote_value do
+      Posts.remove_vote_from_post(post, post.vote_of_current_user)
+    else
+      Posts.change_vote_on_post(post, post.vote_of_current_user, clicked_vote)
     end
   end
 

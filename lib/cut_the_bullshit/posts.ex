@@ -294,4 +294,18 @@ defmodule CutTheBullshit.Posts do
     |> Repo.transaction()
     |> add_empty_vote_to_post()
   end
+
+  def change_vote_on_post(%Post{} = post, %Vote{} = vote, new_vote_type) do
+    attrs =
+      case new_vote_type do
+        :up -> %{votes: post.votes + 2, id: post.id, user_id: post.user.id}
+        :down -> %{votes: post.votes - 2, id: post.id, user_id: post.user.id}
+      end
+
+    Multi.new()
+    |> Multi.update(:post, Post.vote_changeset(post, attrs))
+    |> Multi.update(:vote, Vote.changeset(vote, %{value: new_vote_type}))
+    |> Repo.transaction()
+    |> add_vote_to_post()
+  end
 end
