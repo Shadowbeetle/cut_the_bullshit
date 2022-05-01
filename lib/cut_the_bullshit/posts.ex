@@ -35,13 +35,13 @@ defmodule CutTheBullshit.Posts do
     Repo.all(query)
   end
 
-  def list_posts_with_users_upvotes(current_user_id) do
+  def list_posts_with_users_upvotes(%User{} = current_user) do
     query =
       from p in Post,
         left_join: user in assoc(p, :user),
         left_join: comment in assoc(p, :comments),
         left_join: vote in Vote,
-        on: [user_id: ^current_user_id, post_id: p.id],
+        on: [user_id: ^current_user.id, post_id: p.id],
         group_by: [p.id, user.id, vote.id],
         select_merge: %{comment_count: count(comment.id)},
         preload: [user: user, vote_of_current_user: vote]
