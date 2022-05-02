@@ -18,7 +18,6 @@
   <thead>
     <tr>
       <th>Title</th>
-      <th>Description</th>
       <th>Url</th>
       <th>Author</th>
       <th>Comments</th>
@@ -30,7 +29,6 @@
     <%= for post <- @posts do %>
       <tr id={"post-#{post.id}"}>
         <td><%= post.title %></td>
-        <td><%= post.description %></td>
         <td><%= post.url %></td>
         <td><%= post.user.username %></td>
         <td><%= post.comment_count %></td>
