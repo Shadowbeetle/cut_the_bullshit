@@ -10,16 +10,17 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   def mount(_params, session, socket) do
     socket = assign_defaults(session, socket)
 
-    {:ok,
-     socket
-     |> assign(:posts, list_posts(socket.assigns))}
+    {:ok, socket}
   end
-
-  # TODO: add vote component to show post
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    page = if is_nil(params["page"]), do: 1, else: params["page"] |> String.to_integer()
+
+    {:noreply,
+     apply_action(socket, socket.assigns.live_action, params)
+     |> assign(:posts, list_posts(socket.assigns, page))
+     |> assign(:page, page)}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -45,14 +46,14 @@ defmodule CutTheBullshitWeb.PostLive.Index do
     post = Posts.get_post!(id)
     {:ok, _} = Posts.delete_post(post)
 
-    {:noreply, assign(socket, :posts, list_posts(socket.assigns.current_user))}
+    {:noreply, assign(socket, :posts, list_posts(socket.assigns.current_user, socket.assigns.page))}
   end
 
-  defp list_posts(assigns) do
+  defp list_posts(assigns, page) do
     if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
-      Posts.list_posts(assigns.current_user)
+      Posts.list_posts(assigns.current_user, page)
     else
-      Posts.list_posts()
+      Posts.list_posts(page)
     end
   end
 end

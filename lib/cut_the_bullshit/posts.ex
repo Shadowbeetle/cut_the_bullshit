@@ -37,6 +37,24 @@ defmodule CutTheBullshit.Posts do
     Repo.all(query)
   end
 
+  def list_posts(page) when is_integer(page) do
+    page_size = 30
+    offset = (page - 1) * 30
+
+    query =
+      from p in Post,
+        left_join: user in assoc(p, :user),
+        left_join: comment in assoc(p, :comments),
+        group_by: [p.id, user.id],
+        select_merge: %{comment_count: count(comment.id)},
+        preload: [user: user],
+        order_by: [desc: :inserted_at],
+        limit: ^page_size,
+        offset: ^offset
+
+    Repo.all(query)
+  end
+
   def list_posts(%User{} = current_user) do
     query =
       from p in Post,
@@ -48,6 +66,26 @@ defmodule CutTheBullshit.Posts do
         select_merge: %{comment_count: count(comment.id)},
         preload: [user: user, vote_of_current_user: vote],
         order_by: [desc: :inserted_at]
+
+    Repo.all(query)
+  end
+
+  def list_posts(%User{} = current_user, page) when is_integer(page) do
+    page_size = 30
+    offset = (page - 1) * 30
+
+    query =
+      from p in Post,
+        left_join: user in assoc(p, :user),
+        left_join: comment in assoc(p, :comments),
+        left_join: vote in Vote,
+        on: [user_id: ^current_user.id, post_id: p.id],
+        group_by: [p.id, user.id, vote.id],
+        select_merge: %{comment_count: count(comment.id)},
+        preload: [user: user, vote_of_current_user: vote],
+        order_by: [desc: :inserted_at],
+        limit: ^page_size,
+        offset: ^offset
 
     Repo.all(query)
   end
