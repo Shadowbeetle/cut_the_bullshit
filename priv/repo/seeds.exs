@@ -12,13 +12,10 @@
 
 defmodule CutTheBullshit.Seed do
   alias CutTheBullshit.Accounts
-  alias CutTheBullshit.Accounts.User
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Posts.Post
-  alias CutTheBullshit.Posts.Vote, as: PostVote
   alias CutTheBullshit.Comments
   alias CutTheBullshit.Comments.Comment
-  alias CutTheBullshit.Comments.Vote, as: CommentVote
 
   def get_random_user_id(created_users) do
     Enum.random(0..(tuple_size(created_users) - 1))
@@ -58,11 +55,11 @@ defmodule CutTheBullshit.Seed do
   end
 
   def create_content(created_users) do
-    for _ <- 1..300 do
+    for i <- 1..300 do
       post_insert_result = create_post(created_users)
 
       create_post_votes(post_insert_result, created_users)
-      create_comments(post_insert_result, created_users)
+      create_comments(post_insert_result, i, created_users)
     end
   end
 
@@ -70,24 +67,32 @@ defmodule CutTheBullshit.Seed do
     user = get_random_user(created_users)
     url = Faker.Internet.url()
 
-    Posts.create_post(%{
-      "user_id" => user.id,
-      "url" => url,
-      "title" =>
-        url
-        |> String.replace(~r"https?://", "")
-        |> String.replace(~r"\..+$", "")
-        |> String.capitalize(),
-      "description" => Faker.Lorem.paragraph()
-    })
+    case Posts.create_post(%{
+           "user_id" => user.id,
+           "url" => url,
+           "title" =>
+             url
+             |> String.replace(~r"https?://", "")
+             |> String.replace(~r"\..+$", "")
+             |> String.capitalize(),
+           "description" => Faker.Lorem.paragraphs(3) |> Enum.join("\n\n")
+         }) do
+      {:ok, %Post{} = post} ->
+        full_post = Posts.get_post!(post.id)
+        {:ok, full_post}
+
+      default ->
+        default
+    end
   end
 
   def create_post_votes({:ok, %Post{} = post} = _post_insert_result, created_users) do
     for i <- 0..get_random_user_id(created_users) do
       voting_user = get_random_user(created_users)
       vote = if rem(i, 2) == 0, do: :up, else: :down
+      existing_vote = Posts.get_vote(post.id, voting_user.id)
 
-      if voting_user.id != post.user_id do
+      if voting_user.id != post.user_id and is_nil(existing_vote) do
         Posts.vote_on_post(post, voting_user, vote)
       end
     end
@@ -97,24 +102,24 @@ defmodule CutTheBullshit.Seed do
     nil
   end
 
-  def create_comments({:ok, %Post{} = post} = _post_insert_result, created_users) do
-    for i <- 1..Enum.random(1..100) do
+  def create_comments({:ok, %Post{} = post} = _post_insert_result, post_number, created_users) do
+    max_comments = if post_number == 1, do: 100, else: Enum.random(0..5)
+
+    for i <- 1..max_comments do
       user = get_random_user(created_users)
 
-      text =
-        cond do
-          rem(i, 5) == 0 -> Faker.Lorem.Shakespeare.romeo_and_juliet()
-          rem(i, 3) == 0 -> Faker.Lorem.Shakespeare.king_richard_iii()
-          rem(i, 2) == 0 -> Faker.Lorem.Shakespeare.as_you_like_it()
-          true -> Faker.Lorem.Shakespeare.hamlet()
-        end
-
       comment_insert_result =
-        Comments.create_comment(%{
-          user_id: user.id,
-          post_id: post.id,
-          text: text
-        })
+        case Comments.create_comment(%{
+               user_id: user.id,
+               post_id: post.id,
+               text: Faker.Lorem.paragraphs(3) |> Enum.join("\n\n")
+             }) do
+          {:ok, %{comment: %Comment{} = comment}} ->
+            {:ok, Comments.get_comment!(comment.id)}
+
+          default ->
+            default
+        end
 
       create_comment_votes(comment_insert_result, created_users)
     end
@@ -124,12 +129,16 @@ defmodule CutTheBullshit.Seed do
     nil
   end
 
-  def create_comment_votes({:ok, %Comment{} = comment} = _comment_insert_result, created_users) do
+  def create_comment_votes(
+        {:ok, %Comment{} = comment} = _comment_insert_result,
+        created_users
+      ) do
     for i <- 0..get_random_user_id(created_users) do
       voting_user = get_random_user(created_users)
       vote = if rem(i, 2) == 0, do: :up, else: :down
+      existing_vote = Comments.get_vote(comment.id, voting_user.id)
 
-      if voting_user.id != comment.user_id do
+      if voting_user.id != comment.user_id and is_nil(existing_vote) do
         Comments.vote_on_comment(comment, voting_user, vote)
       end
     end
