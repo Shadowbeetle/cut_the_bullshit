@@ -44,7 +44,7 @@ defmodule CutTheBullshitWeb.PostLive.Show do
 
     {:noreply,
      socket
-     |> assign(:post, Posts.get_post!(socket.assigns.post.id))
+     |> assign(:post, get_post!(socket.assigns.post.id, socket.assigns))
      |> put_flash(:info, "Comment deleted successfully")}
   end
 
