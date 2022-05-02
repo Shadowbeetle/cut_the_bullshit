@@ -223,6 +223,14 @@ defmodule CutTheBullshit.Posts do
   """
   def get_vote!(id), do: Repo.get!(Vote, id)
 
+  def get_vote(post_id, user_id) do
+    query =
+      from v in Vote,
+        where: v.post_id == ^post_id and v.user_id == ^user_id
+
+    Repo.one(query)
+  end
+
   defp create_vote(transaction, name, user_id, vote_type) when vote_type in [:up, :down] do
     Multi.insert(
       transaction,
