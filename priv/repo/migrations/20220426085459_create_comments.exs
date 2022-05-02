@@ -3,7 +3,7 @@ defmodule CutTheBullshit.Repo.Migrations.CreateComments do
 
   def change do
     create table(:comments) do
-      add :text, :string, null: false
+      add :text, :text, null: false
       add :votes, :integer, null: false, default: 1
       add :user_id, references(:users, on_delete: :delete_all), null: false
       add :post_id, references(:posts, on_delete: :delete_all), null: false
