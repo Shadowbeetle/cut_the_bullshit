@@ -3,7 +3,7 @@ defmodule CutTheBullshit.Repo.Migrations.CreatePosts do
 
   def change do
     create table(:posts) do
-      # TODO: add validation to schem for length no longer than 255
+      # TODO: add validation to schema for length no longer than 255
       add :title, :string, null: false
       add :description, :text, null: false
       add :url, :string, null: false

@@ -16,6 +16,8 @@ defmodule CutTheBullshitWeb.PostLive.Show do
 
   def handle_params(%{"id" => id} = params, _, socket) do
     page = if is_nil(params["page"]), do: 1, else: params["page"] |> String.to_integer()
+
+    # TODO fix this, so that it returns a post with empty comments[] when the page goes over the last item
     post = get_post(id, socket.assigns, page)
 
     comment_count = Posts.get_comment_count(id)
