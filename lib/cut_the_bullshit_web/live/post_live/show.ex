@@ -15,10 +15,8 @@ defmodule CutTheBullshitWeb.PostLive.Show do
   @impl true
 
   def handle_params(%{"id" => id} = params, _, socket) do
-    Logger.info("handle_params: id = #{id}")
-    post = get_post!(id, socket.assigns)
-
-    Logger.info("handle_params: post = #{post |> inspect}")
+    page = if is_nil(params["page"]), do: 1, else: params["page"] |> String.to_integer()
+    post = get_post(id, socket.assigns, page)
 
     comment_count = Posts.get_comment_count(id)
 
@@ -33,7 +31,8 @@ defmodule CutTheBullshitWeb.PostLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:post, post)
      |> assign(:comment, comment)
-     |> assign(:comment_count, comment_count)}
+     |> assign(:comment_count, comment_count)
+     |> assign(:page, page)}
   end
 
   @impl true
@@ -44,7 +43,7 @@ defmodule CutTheBullshitWeb.PostLive.Show do
 
     {:noreply,
      socket
-     |> assign(:post, get_post!(socket.assigns.post.id, socket.assigns))
+     |> assign(:post, get_post(socket.assigns.post.id, socket.assigns, socket.assigns.page))
      |> put_flash(:info, "Comment deleted successfully")}
   end
 
@@ -53,11 +52,11 @@ defmodule CutTheBullshitWeb.PostLive.Show do
   defp page_title(:new_comment), do: "Show Post"
   defp page_title(:edit), do: "Edit Post"
 
-  defp get_post!(post_id, assigns) do
+  defp get_post(post_id, assigns, page) do
     if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
-      Posts.get_post!(post_id, assigns.current_user)
+      Posts.get_post(post_id, assigns.current_user, page)
     else
-      Posts.get_post!(post_id)
+      Posts.get_post(post_id, page)
     end
   end
 end

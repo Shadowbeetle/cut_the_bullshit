@@ -116,7 +116,7 @@ defmodule CutTheBullshit.Posts do
     Repo.one!(query)
   end
 
-  def get_post!(id, page) when is_integer(page) do
+  def get_post(id, page) when is_integer(page) do
     page_size = 30
     offset = (page - 1) * 30
 
@@ -130,7 +130,7 @@ defmodule CutTheBullshit.Posts do
         limit: ^page_size,
         offset: ^offset
 
-    Repo.one!(query)
+    Repo.one(query)
   end
 
   def get_post!(id, %User{} = current_user) do
@@ -153,7 +153,7 @@ defmodule CutTheBullshit.Posts do
     Repo.one!(query)
   end
 
-  def get_post!(id, %User{} = current_user, page) when is_integer(page) do
+  def get_post(id, %User{} = current_user, page) when is_integer(page) do
     page_size = 30
     offset = (page - 1) * 30
 
@@ -175,7 +175,7 @@ defmodule CutTheBullshit.Posts do
         limit: ^page_size,
         offset: ^offset
 
-    Repo.one!(query)
+    Repo.one(query)
   end
 
   def get_comment_count(id) do
