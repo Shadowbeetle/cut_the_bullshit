@@ -18,8 +18,6 @@ defmodule CutTheBullshitWeb.PostLive.Index do
     page = if is_nil(params["page"]), do: 1, else: params["page"] |> String.to_integer()
     order_by = if is_nil(params["order_by"]), do: "latest", else: params["order_by"]
 
-    Logger.info(inspect(params))
-
     {:noreply,
      apply_action(socket, socket.assigns.live_action, params)
      |> assign(:posts, list_posts(socket.assigns, page, order_by))
