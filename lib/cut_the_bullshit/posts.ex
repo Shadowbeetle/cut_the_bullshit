@@ -10,7 +10,6 @@ defmodule CutTheBullshit.Posts do
 
   alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Posts.Vote
-  alias CutTheBullshit.Comments.Vote, as: CommentVote
   alias CutTheBullshit.Accounts.User
 
   require Logger

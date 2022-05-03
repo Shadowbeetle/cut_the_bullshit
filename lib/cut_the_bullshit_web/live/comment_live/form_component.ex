@@ -53,7 +53,7 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
   end
 
   defp save_comment(socket, :new_comment, params) do
-    case Comments.create_comment(params) do
+    case Comments.create_comment(socket.assigns.post, params) do
       {:ok, %{comment: _, vote: _}} ->
         {:noreply,
          socket
