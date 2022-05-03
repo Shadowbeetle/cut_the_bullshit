@@ -117,3 +117,7 @@
     <% end %>
   </tbody>
 </table>
+
+<div>
+	<%= live_patch "[more]", to: Routes.post_show_path(@socket, :show, @post, page: @page + 1) %>
+</div>

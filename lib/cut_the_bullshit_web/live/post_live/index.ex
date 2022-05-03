@@ -13,8 +13,6 @@ defmodule CutTheBullshitWeb.PostLive.Index do
     {:ok, socket}
   end
 
-  #TODO: test if post and user CRUD works on the UI
-
   @impl true
   def handle_params(params, _url, socket) do
     page = if is_nil(params["page"]), do: 1, else: params["page"] |> String.to_integer()
@@ -48,7 +46,8 @@ defmodule CutTheBullshitWeb.PostLive.Index do
     post = Posts.get_post!(id)
     {:ok, _} = Posts.delete_post(post)
 
-    {:noreply, assign(socket, :posts, list_posts(socket.assigns.current_user, socket.assigns.page))}
+    {:noreply,
+     assign(socket, :posts, list_posts(socket.assigns.current_user, socket.assigns.page))}
   end
 
   defp list_posts(assigns, page) do

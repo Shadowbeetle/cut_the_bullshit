@@ -56,3 +56,6 @@
 <%= if is_logged_in(@current_user) do %>
   <span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>
 <% end %>
+<div>
+	<%= live_patch "[more]", to: Routes.post_index_path(@socket, :index, page: @page + 1) %>
+</div>
