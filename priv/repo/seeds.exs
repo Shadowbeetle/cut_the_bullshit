@@ -55,7 +55,7 @@ defmodule CutTheBullshit.Seed do
   end
 
   def create_content(created_users) do
-    for i <- 1..300 do
+    for i <- 1..100 do
       post_insert_result = create_post(created_users)
 
       create_post_votes(post_insert_result, created_users)
@@ -87,9 +87,9 @@ defmodule CutTheBullshit.Seed do
   end
 
   def create_post_votes({:ok, %Post{} = post} = _post_insert_result, created_users) do
-    for i <- 0..get_random_user_id(created_users) do
+    for _ <- 0..get_random_user_id(created_users) do
       voting_user = get_random_user(created_users)
-      vote = if rem(i, 2) == 0, do: :up, else: :down
+      vote = if :rand.uniform() > 0.3, do: :up, else: :down
       existing_vote = Posts.get_vote(post.id, voting_user.id)
 
       if voting_user.id != post.user_id and is_nil(existing_vote) do
@@ -105,11 +105,12 @@ defmodule CutTheBullshit.Seed do
   def create_comments({:ok, %Post{} = post} = _post_insert_result, post_number, created_users) do
     max_comments = if post_number == 1, do: 100, else: Enum.random(0..5)
 
-    for i <- 1..max_comments do
+    for _ <- 1..max_comments do
       user = get_random_user(created_users)
+      post = Posts.get_post!(post.id)
 
       comment_insert_result =
-        case Comments.create_comment(%{
+        case Comments.create_comment(post, %{
                user_id: user.id,
                post_id: post.id,
                text: Faker.Lorem.paragraphs(3) |> Enum.join("\n\n")
@@ -125,7 +126,7 @@ defmodule CutTheBullshit.Seed do
     end
   end
 
-  def create_comments({:ok, %Post{} = post} = _post_insert_result, created_users) do
+  def create_comments({:ok, %Post{}} = _post_insert_result, _created_users) do
     nil
   end
 
@@ -133,9 +134,9 @@ defmodule CutTheBullshit.Seed do
         {:ok, %Comment{} = comment} = _comment_insert_result,
         created_users
       ) do
-    for i <- 0..get_random_user_id(created_users) do
+    for _ <- 0..get_random_user_id(created_users) do
       voting_user = get_random_user(created_users)
-      vote = if rem(i, 2) == 0, do: :up, else: :down
+      vote = if :rand.uniform() > 0.7, do: :up, else: :down
       existing_vote = Comments.get_vote(comment.id, voting_user.id)
 
       if voting_user.id != comment.user_id and is_nil(existing_vote) do
@@ -144,7 +145,7 @@ defmodule CutTheBullshit.Seed do
     end
   end
 
-  def create_comment_votes({:error, _} = _comment_insert_result, created_users) do
+  def create_comment_votes({:error, _} = _comment_insert_result, _created_users) do
     nil
   end
 end

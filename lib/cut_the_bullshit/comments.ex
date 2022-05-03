@@ -72,16 +72,20 @@ defmodule CutTheBullshit.Comments do
 
   ## Examples
 
-      iex> create_comment(%{field: value})
-      {:ok, %Comment{}}
+      iex> create_comment(post, %{field: value})
+      {:ok, %{commet: %Comment{}, vote: %Vote{}, post: %Post{}}}
 
       iex> create_comment(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+      {:error, :post, %Post{}, %Ecto.Changeset{}}
 
   """
-  def create_comment(attrs \\ %{}) do
+  def create_comment(%Post{} = post, attrs \\ %{}) do
+    Logger.info("current comment count: #{post.comment_count}")
+    Logger.info("new comment count: #{post.comment_count + 1}")
+
     Multi.new()
     |> Multi.insert(:comment, Comment.changeset(%Comment{}, attrs))
+    |> Multi.update(:post, Post.changeset(post, %{comment_count: post.comment_count + 1}))
     |> Multi.insert(:vote, fn comment_insert_result ->
       case comment_insert_result do
         %{comment: comment} ->
@@ -147,8 +151,11 @@ defmodule CutTheBullshit.Comments do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_comment(%Comment{} = comment) do
-    Repo.delete(comment)
+  def delete_comment(%Comment{} = comment, %Post{} = post) do
+    Multi.new()
+    |> Multi.delete(:comment, comment)
+    |> Multi.update(:post, Post.changeset(post, %{comment_count: post.comment_count - 1}))
+    |> Repo.transaction()
   end
 
   @doc """

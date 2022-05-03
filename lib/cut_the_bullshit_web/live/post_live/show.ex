@@ -41,7 +41,7 @@ defmodule CutTheBullshitWeb.PostLive.Show do
   def handle_event("delete_comment", %{"id" => id}, socket) do
     {:ok, _} =
       Comments.get_comment!(id)
-      |> Comments.delete_comment()
+      |> Comments.delete_comment(socket.assigns.post)
 
     {:noreply,
      socket

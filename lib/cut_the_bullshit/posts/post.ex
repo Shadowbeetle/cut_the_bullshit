@@ -7,7 +7,7 @@ defmodule CutTheBullshit.Posts.Post do
     field :title, :string
     field :url, :string
     field :votes, :integer
-    field :comment_count, :integer, virtual: true
+    field :comment_count, :integer
 
     belongs_to :user, CutTheBullshit.Accounts.User
     has_many :comments, CutTheBullshit.Comments.Comment
@@ -20,7 +20,7 @@ defmodule CutTheBullshit.Posts.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :votes, :description, :url, :user_id])
+    |> cast(attrs, [:title, :votes, :description, :url, :user_id, :comment_count])
     |> validate_required([:title, :description, :url, :user_id])
   end
 
