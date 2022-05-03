@@ -2,6 +2,7 @@ defmodule CutTheBullshitWeb.PostLive.Show do
   use CutTheBullshitWeb, :live_view
 
   alias CutTheBullshit.Posts
+  alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Comments
   alias CutTheBullshit.Comments.Comment
 
@@ -16,13 +17,12 @@ defmodule CutTheBullshitWeb.PostLive.Show do
 
   def handle_params(%{"id" => id} = params, _, socket) do
     page = if is_nil(params["page"]), do: 1, else: params["page"] |> String.to_integer()
+    # id = String.to_integer(id)
 
-    # TODO fix this, so that it returns a post with empty comments[] when the page goes over the last item
-    post = get_post(id, socket.assigns, page)
+    post = get_post!(id, socket.assigns)
+    comments = list_comments(post, socket.assigns, page)
 
-    comment_count = Posts.get_comment_count(id)
-
-    comment =
+    comment_being_edited =
       case params do
         %{"comment_id" => comment_id} -> Comments.get_comment!(comment_id)
         _ -> %Comment{}
@@ -32,8 +32,8 @@ defmodule CutTheBullshitWeb.PostLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:post, post)
-     |> assign(:comment, comment)
-     |> assign(:comment_count, comment_count)
+     |> assign(:comments, comments)
+     |> assign(:comment, comment_being_edited)
      |> assign(:page, page)}
   end
 
@@ -45,7 +45,10 @@ defmodule CutTheBullshitWeb.PostLive.Show do
 
     {:noreply,
      socket
-     |> assign(:post, get_post(socket.assigns.post.id, socket.assigns, socket.assigns.page))
+     |> assign(
+       :comments,
+       list_comments(socket.assigns.post, socket.assigns, socket.assigns.page)
+     )
      |> put_flash(:info, "Comment deleted successfully")}
   end
 
@@ -54,11 +57,21 @@ defmodule CutTheBullshitWeb.PostLive.Show do
   defp page_title(:new_comment), do: "Show Post"
   defp page_title(:edit), do: "Edit Post"
 
-  defp get_post(post_id, assigns, page) do
+  defp get_post!(post_id, assigns) do
     if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
-      Posts.get_post(post_id, assigns.current_user, page)
+      Logger.info("getting post #{post_id} of user: #{assigns.current_user.id}")
+      Posts.get_post!(post_id, assigns.current_user)
     else
-      Posts.get_post(post_id, page)
+      Logger.info("getting post #{post_id}")
+      Posts.get_post!(post_id)
+    end
+  end
+
+  defp list_comments(%Post{} = post, assigns, page) do
+    if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
+      Comments.list_comments_of_post(post, assigns.current_user, page)
+    else
+      Comments.list_comments_of_post(post, page)
     end
   end
 end

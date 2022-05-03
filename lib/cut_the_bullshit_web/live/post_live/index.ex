@@ -13,6 +13,8 @@ defmodule CutTheBullshitWeb.PostLive.Index do
     {:ok, socket}
   end
 
+  #TODO: test if post and user CRUD works on the UI
+
   @impl true
   def handle_params(params, _url, socket) do
     page = if is_nil(params["page"]), do: 1, else: params["page"] |> String.to_integer()

@@ -28,16 +28,24 @@ defmodule CutTheBullshit.Comments do
     Repo.all(Comment) |> Repo.preload(:user)
   end
 
-  def list_comments_of_post(%Post{} = post) do
+  def list_comments_of_post(%Post{} = post, page) when is_integer(page) do
+    page_size = 30
+    offset = (page - 1) * 30
+
     query =
       from c in Comment,
         where: c.post_id == ^post.id,
+        limit: ^page_size,
+        offset: ^offset,
         order_by: [desc: :inserted_at]
 
     Repo.all(query) |> Repo.preload(:user)
   end
 
-  def list_comments_of_post(%Post{} = post, %User{} = current_user) do
+  def list_comments_of_post(%Post{} = post, %User{} = current_user, page) when is_integer(page) do
+    page_size = 30
+    offset = (page - 1) * 30
+
     query =
       from c in Comment,
         where: c.post_id == ^post.id,
@@ -46,7 +54,9 @@ defmodule CutTheBullshit.Comments do
         on: [user_id: ^current_user.id, comment_id: c.id],
         group_by: [c.id, user.id, vote.id],
         preload: [user: user, vote_of_current_user: vote],
-        order_by: [asc: :inserted_at]
+        limit: ^page_size,
+        offset: ^offset,
+        order_by: [desc: :inserted_at]
 
     Repo.all(query)
   end
@@ -80,9 +90,6 @@ defmodule CutTheBullshit.Comments do
 
   """
   def create_comment(%Post{} = post, attrs \\ %{}) do
-    Logger.info("current comment count: #{post.comment_count}")
-    Logger.info("new comment count: #{post.comment_count + 1}")
-
     Multi.new()
     |> Multi.insert(:comment, Comment.changeset(%Comment{}, attrs))
     |> Multi.update(:post, Post.changeset(post, %{comment_count: post.comment_count + 1}))

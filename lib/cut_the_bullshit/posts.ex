@@ -105,28 +105,9 @@ defmodule CutTheBullshit.Posts do
       from p in Post,
         where: p.id == ^id,
         left_join: user in assoc(p, :user),
-        left_join: comments in assoc(p, :comments),
-        left_join: comment_user in assoc(comments, :user),
-        preload: [comments: {comments, user: comment_user}, user: user]
+        preload: [user: user]
 
     Repo.one!(query)
-  end
-
-  def get_post(id, page) when is_integer(page) do
-    page_size = 30
-    offset = (page - 1) * 30
-
-    query =
-      from p in Post,
-        where: p.id == ^id,
-        left_join: user in assoc(p, :user),
-        left_join: comments in assoc(p, :comments),
-        left_join: comment_user in assoc(comments, :user),
-        preload: [comments: {comments, user: comment_user}, user: user],
-        limit: ^page_size,
-        offset: ^offset
-
-    Repo.one(query)
   end
 
   def get_post!(id, %User{} = current_user) do
@@ -136,12 +117,7 @@ defmodule CutTheBullshit.Posts do
         left_join: user in assoc(p, :user),
         left_join: vote in Vote,
         on: [user_id: ^current_user.id, post_id: p.id],
-        left_join: comments in assoc(p, :comments),
-        left_join: comment_user in assoc(comments, :user),
-        left_join: comment_vote in CommentVote,
-        on: [user_id: ^current_user.id, comment_id: comments.id],
         preload: [
-          comments: {comments, user: comment_user, vote_of_current_user: comment_vote},
           user: user,
           vote_of_current_user: vote
         ]
@@ -149,30 +125,6 @@ defmodule CutTheBullshit.Posts do
     Repo.one!(query)
   end
 
-  def get_post(id, %User{} = current_user, page) when is_integer(page) do
-    page_size = 30
-    offset = (page - 1) * 30
-
-    query =
-      from p in Post,
-        where: p.id == ^id,
-        left_join: user in assoc(p, :user),
-        left_join: vote in Vote,
-        on: [user_id: ^current_user.id, post_id: p.id],
-        left_join: comments in assoc(p, :comments),
-        left_join: comment_user in assoc(comments, :user),
-        left_join: comment_vote in CommentVote,
-        on: [user_id: ^current_user.id, comment_id: comments.id],
-        preload: [
-          comments: {comments, user: comment_user, vote_of_current_user: comment_vote},
-          user: user,
-          vote_of_current_user: vote
-        ],
-        limit: ^page_size,
-        offset: ^offset
-
-    Repo.one(query)
-  end
 
   def get_comment_count(id) do
     query =

@@ -57,7 +57,7 @@
   
   <li>
     <strong>Comments:</strong>
-    <%= @comment_count %>
+    <%= @post.comment_count %>
   </li>
 
   <li>
@@ -94,7 +94,7 @@
     </tr>
   </thead>
   <tbody id="comments">
-    <%= for comment <- @post.comments do %>
+    <%= for comment <- @comments do %>
       <tr id={"comment-#{comment.id}"}>
         <td><%= comment.text %></td>
         <td><%= comment.user.username %></td>
