@@ -37,7 +37,7 @@ defmodule CutTheBullshit.Comments do
         where: c.post_id == ^post.id,
         limit: ^page_size,
         offset: ^offset,
-        order_by: [desc: :inserted_at]
+        order_by: [desc: :votes, desc: :inserted_at]
 
     Repo.all(query) |> Repo.preload(:user)
   end
@@ -56,7 +56,7 @@ defmodule CutTheBullshit.Comments do
         preload: [user: user, vote_of_current_user: vote],
         limit: ^page_size,
         offset: ^offset,
-        order_by: [desc: :inserted_at]
+        order_by: [desc: :votes, desc: :inserted_at]
 
     Repo.all(query)
   end
