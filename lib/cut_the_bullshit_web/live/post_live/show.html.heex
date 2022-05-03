@@ -42,7 +42,9 @@
 
   <li>
     <strong>Description:</strong>
-    <%= @post.description %>
+    <%= for p <- @post.description |> String.split("\n") do %>
+      <p><%= p %></p>
+    <% end %>
   </li>
 
   <li>
@@ -95,7 +97,11 @@
   <tbody id="comments">
     <%= for comment <- @comments do %>
       <tr id={"comment-#{comment.id}"}>
-        <td><%= comment.text %></td>
+        <td>
+          <%= for p <- comment.text |> String.split("\n") do %>
+            <p><%= p %></p>
+          <% end %>
+        </td>
         <td><%= comment.user.username %></td>
         <td><%= comment.votes %></td>
         <td>
