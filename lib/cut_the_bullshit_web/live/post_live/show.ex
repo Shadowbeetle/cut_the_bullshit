@@ -59,10 +59,8 @@ defmodule CutTheBullshitWeb.PostLive.Show do
 
   defp get_post!(post_id, assigns) do
     if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
-      Logger.info("getting post #{post_id} of user: #{assigns.current_user.id}")
       Posts.get_post!(post_id, assigns.current_user)
     else
-      Logger.info("getting post #{post_id}")
       Posts.get_post!(post_id)
     end
   end

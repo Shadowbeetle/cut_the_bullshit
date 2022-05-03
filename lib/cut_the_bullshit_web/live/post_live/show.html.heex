@@ -62,7 +62,6 @@
 
   <li>
     <strong>Votes:</strong>
-    <%= Logger.info("html post: #{inspect(@post.vote_of_current_user)}") %>
     <.live_component
       module={CutTheBullshitWeb.PostLive.VoteComponent}
       id={"vote-#{@post.id}"}
