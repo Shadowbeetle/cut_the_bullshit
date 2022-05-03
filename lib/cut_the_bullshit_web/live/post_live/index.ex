@@ -16,11 +16,15 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   @impl true
   def handle_params(params, _url, socket) do
     page = if is_nil(params["page"]), do: 1, else: params["page"] |> String.to_integer()
+    order_by = if is_nil(params["order_by"]), do: "latest", else: params["order_by"]
+
+    Logger.info(inspect(params))
 
     {:noreply,
      apply_action(socket, socket.assigns.live_action, params)
-     |> assign(:posts, list_posts(socket.assigns, page))
-     |> assign(:page, page)}
+     |> assign(:posts, list_posts(socket.assigns, page, order_by))
+     |> assign(:page, page)
+     |> assign(:order_by, order_by)}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -47,14 +51,18 @@ defmodule CutTheBullshitWeb.PostLive.Index do
     {:ok, _} = Posts.delete_post(post)
 
     {:noreply,
-     assign(socket, :posts, list_posts(socket.assigns.current_user, socket.assigns.page))}
+     assign(
+       socket,
+       :posts,
+       list_posts(socket.assigns.current_user, socket.assigns.page, socket.assigns.order_by)
+     )}
   end
 
-  defp list_posts(assigns, page) do
+  defp list_posts(assigns, page, order_by) do
     if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
-      Posts.list_posts(assigns.current_user, page)
+      Posts.list_posts(assigns.current_user, page, order_by)
     else
-      Posts.list_posts(page)
+      Posts.list_posts(page, order_by)
     end
   end
 end

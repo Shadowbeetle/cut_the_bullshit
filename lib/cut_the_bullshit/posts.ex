@@ -36,9 +36,10 @@ defmodule CutTheBullshit.Posts do
     Repo.all(query)
   end
 
-  def list_posts(page) when is_integer(page) do
+  def list_posts(page, order_by) when is_integer(page) do
     page_size = 30
     offset = (page - 1) * 30
+    order = get_order(order_by)
 
     query =
       from p in Post,
@@ -47,7 +48,7 @@ defmodule CutTheBullshit.Posts do
         group_by: [p.id, user.id],
         select_merge: %{comment_count: count(comment.id)},
         preload: [user: user],
-        order_by: [desc: :inserted_at],
+        order_by: ^order,
         limit: ^page_size,
         offset: ^offset
 
@@ -67,9 +68,10 @@ defmodule CutTheBullshit.Posts do
     Repo.all(query)
   end
 
-  def list_posts(%User{} = current_user, page) when is_integer(page) do
+  def list_posts(%User{} = current_user, page, order_by) when is_integer(page) do
     page_size = 30
     offset = (page - 1) * 30
+    order = get_order(order_by)
 
     query =
       from p in Post,
@@ -78,11 +80,20 @@ defmodule CutTheBullshit.Posts do
         on: [user_id: ^current_user.id, post_id: p.id],
         group_by: [p.id, user.id, vote.id],
         preload: [user: user, vote_of_current_user: vote],
-        order_by: [desc: :inserted_at],
+        order_by: ^order,
         limit: ^page_size,
         offset: ^offset
 
     Repo.all(query)
+  end
+
+  defp get_order(order_by) do
+    case order_by do
+      "latest" -> [desc: :inserted_at]
+      "popular" -> [desc: :votes, desc: :inserted_at]
+      "comments" -> [desc: :comment_count, desc: :votes, desc: :inserted_at]
+      _ -> [desc: :inserted_at]
+    end
   end
 
   @doc """
@@ -123,7 +134,6 @@ defmodule CutTheBullshit.Posts do
 
     Repo.one!(query)
   end
-
 
   def get_comment_count(id) do
     query =

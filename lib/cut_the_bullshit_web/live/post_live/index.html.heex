@@ -1,7 +1,7 @@
 <h1>Listing Posts</h1>
 
 <%= if @live_action in [:new, :edit] do %>
-  <.modal return_to={Routes.post_index_path(@socket, :index)}>
+  <.modal return_to={Routes.post_index_path(@socket, :index, page: @page, order_by: @order_by)}>
     <.live_component
       module={CutTheBullshitWeb.PostLive.FormComponent}
       id={@post.id || :new}
@@ -9,10 +9,16 @@
       action={@live_action}
       post={@post}
       current_user={@current_user}
-      return_to={Routes.post_index_path(@socket, :index)}
+      return_to={Routes.post_index_path(@socket, :index, page: @page, order_by: @order_by)}
     />
   </.modal>
 <% end %>
+
+<div>
+  <%= live_patch "Top", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "popular") %>
+  <%= live_patch "Latest", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "latest") %>
+  <%= live_patch "Commented", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "comments")%>
+</div>
 
 <table>
   <thead>
@@ -44,7 +50,7 @@
         <td>
           <span><%= live_redirect "Show", to: Routes.post_show_path(@socket, :show, post) %></span>
           <%= if is_same_user(@current_user, post.user) do %>
-            <span><%= live_patch "Edit", to: Routes.post_index_path(@socket, :edit, post) %></span>
+            <span><%= live_patch "Edit", to: Routes.post_index_path(@socket, :edit, post, page: @page, order_by: @order_by) %></span>
             <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: post.id, data: [confirm: "Are you sure?"] %></span>
           <% end %>
         </td>
@@ -57,5 +63,5 @@
   <span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>
 <% end %>
 <div>
-	<%= live_patch "[more]", to: Routes.post_index_path(@socket, :index, page: @page + 1) %>
+	<%= live_patch "[more]", to: Routes.post_index_path(@socket, :index, page: @page + 1, order_by: @order_by) %>
 </div>

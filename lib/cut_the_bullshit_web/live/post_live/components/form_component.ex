@@ -32,12 +32,14 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
   end
 
   defp save_post(socket, :edit, params) do
+    Logger.info("return to: #{socket.assigns.return_to}")
+
     case Posts.update_post(socket.assigns.post, params) do
       {:ok, _post} ->
         {:noreply,
          socket
          |> put_flash(:info, "Post updated successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_patch(to: socket.assigns.return_to, replace: true)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -50,7 +52,7 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Post created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_patch(to: socket.assigns.return_to, replace: true)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
