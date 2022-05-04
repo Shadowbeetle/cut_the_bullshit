@@ -18,6 +18,15 @@
   <%= live_patch "Top", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "popular") %>
   <%= live_patch "Latest", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "latest") %>
   <%= live_patch "Commented", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "comments")%>
+  <.form
+    let={f}
+    for={@search_changeset}
+    id="search-form"
+    phx-change="search"
+    phx-submit="search">
+  
+    <%= text_input f, :term, phx_debounce: 500, placeholder: "Search" %>
+  </.form>
 </div>
 
 <table>

@@ -3,6 +3,7 @@ defmodule CutTheBullshitWeb.PostLive.Index do
 
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Posts.Post
+  alias CutTheBullshit.Search.Query
 
   require Logger
 
@@ -21,6 +22,7 @@ defmodule CutTheBullshitWeb.PostLive.Index do
     {:noreply,
      apply_action(socket, socket.assigns.live_action, params)
      |> assign(:posts, list_posts(socket.assigns, page, order_by))
+     |> assign(:search_changeset, Query.changeset(%Query{}, %{"term" => ""}))
      |> assign(:page, page)
      |> assign(:order_by, order_by)}
   end
@@ -44,6 +46,19 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   end
 
   @impl true
+
+  def handle_event("search", %{"query" => query}, socket) do
+    current_search = socket.assigns.search_changeset |> Ecto.Changeset.apply_changes()
+
+    {:noreply,
+     socket
+     |> assign(
+       :search_changeset,
+       Query.changeset(current_search, %{"term" => query["term"]})
+     )
+     |> assign(:posts, search_posts(socket.assigns, query["term"]))}
+  end
+
   def handle_event("delete", %{"id" => id}, socket) do
     post = Posts.get_post!(id)
     {:ok, _} = Posts.delete_post(post)
@@ -61,6 +76,14 @@ defmodule CutTheBullshitWeb.PostLive.Index do
       Posts.list_posts(assigns.current_user, page, order_by)
     else
       Posts.list_posts(page, order_by)
+    end
+  end
+
+  defp search_posts(assigns, query_term) do
+    if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
+      Posts.search_posts_by_name(assigns.current_user, query_term)
+    else
+      Posts.search_posts_by_name(query_term)
     end
   end
 end

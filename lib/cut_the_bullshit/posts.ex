@@ -131,7 +131,7 @@ defmodule CutTheBullshit.Posts do
     Repo.one!(query)
   end
 
-  def search_post_by_name(name_part) when is_binary(name_part) do
+  def search_posts_by_name(name_part) when is_binary(name_part) do
     query =
       from p in Post,
         where: fragment("POSITION(LOWER(?) in LOWER(p0.title))>0", ^name_part),
@@ -143,7 +143,7 @@ defmodule CutTheBullshit.Posts do
     Repo.all(query)
   end
 
-  def search_post_by_name(%User{} = current_user, name_part) when is_binary(name_part) do
+  def search_posts_by_name(%User{} = current_user, name_part) when is_binary(name_part) do
     query =
       from p in Post,
         where: fragment("POSITION(LOWER(?) in LOWER(p0.title))>0", ^name_part),
