@@ -134,7 +134,25 @@ defmodule CutTheBullshit.Posts do
   def search_post_by_name(name_part) when is_binary(name_part) do
     query =
       from p in Post,
-        where: fragment("POSITION(LOWER(?) in LOWER(p0.title))>0", ^name_part)
+        where: fragment("POSITION(LOWER(?) in LOWER(p0.title))>0", ^name_part),
+        left_join: user in assoc(p, :user),
+        group_by: [p.id, user.id],
+        preload: [user: user],
+        order_by: [desc: :inserted_at]
+
+    Repo.all(query)
+  end
+
+  def search_post_by_name(%User{} = current_user, name_part) when is_binary(name_part) do
+    query =
+      from p in Post,
+        where: fragment("POSITION(LOWER(?) in LOWER(p0.title))>0", ^name_part),
+        left_join: user in assoc(p, :user),
+        left_join: vote in Vote,
+        on: [user_id: ^current_user.id, post_id: p.id],
+        group_by: [p.id, user.id, vote.id],
+        preload: [user: user, vote_of_current_user: vote],
+        order_by: [desc: :inserted_at]
 
     Repo.all(query)
   end
