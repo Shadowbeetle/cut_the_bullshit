@@ -27,9 +27,7 @@ defmodule CutTheBullshit.Posts do
     query =
       from p in Post,
         left_join: user in assoc(p, :user),
-        left_join: comment in assoc(p, :comments),
         group_by: [p.id, user.id],
-        select_merge: %{comment_count: count(comment.id)},
         preload: [user: user],
         order_by: [desc: :inserted_at]
 
@@ -39,14 +37,12 @@ defmodule CutTheBullshit.Posts do
   def list_posts(page, order_by) when is_integer(page) do
     page_size = 30
     offset = (page - 1) * 30
-    order = get_order(order_by)
+    order = set_order(order_by)
 
     query =
       from p in Post,
         left_join: user in assoc(p, :user),
-        left_join: comment in assoc(p, :comments),
         group_by: [p.id, user.id],
-        select_merge: %{comment_count: count(comment.id)},
         preload: [user: user],
         order_by: ^order,
         limit: ^page_size,
@@ -71,7 +67,7 @@ defmodule CutTheBullshit.Posts do
   def list_posts(%User{} = current_user, page, order_by) when is_integer(page) do
     page_size = 30
     offset = (page - 1) * 30
-    order = get_order(order_by)
+    order = set_order(order_by)
 
     query =
       from p in Post,
@@ -87,7 +83,7 @@ defmodule CutTheBullshit.Posts do
     Repo.all(query)
   end
 
-  defp get_order(order_by) do
+  defp set_order(order_by) do
     case order_by do
       "latest" -> [desc: :inserted_at]
       "popular" -> [desc: :votes, desc: :inserted_at]
@@ -135,13 +131,12 @@ defmodule CutTheBullshit.Posts do
     Repo.one!(query)
   end
 
-  def get_comment_count(id) do
+  def search_post_by_name(name_part) when is_binary(name_part) do
     query =
       from p in Post,
-        where: p.id == ^id,
-        left_join: comment in assoc(p, :comments)
+        where: fragment("POSITION(LOWER(?) in LOWER(p0.title))>0", ^name_part)
 
-    Repo.aggregate(query, :count, :id)
+    Repo.all(query)
   end
 
   @doc """
