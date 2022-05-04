@@ -41,7 +41,7 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
          |> put_flash(:info, "Post updated successfully")
          |> push_redirect(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, _, %Ecto.Changeset{} = changeset, _} ->
         {:noreply, assign(socket, :changeset, changeset)}
     end
   end
@@ -54,7 +54,7 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
          |> put_flash(:info, "Post created successfully")
          |> push_redirect(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, _, %Ecto.Changeset{} = changeset, _} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
   end

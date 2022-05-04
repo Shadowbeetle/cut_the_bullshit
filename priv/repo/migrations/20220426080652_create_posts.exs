@@ -15,5 +15,6 @@ defmodule CutTheBullshit.Repo.Migrations.CreatePosts do
     end
 
     create index(:posts, [:user_id])
+    create unique_index(:posts, [:title])
   end
 end

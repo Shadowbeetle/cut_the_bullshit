@@ -22,6 +22,7 @@ defmodule CutTheBullshit.Posts.Post do
     post
     |> cast(attrs, [:title, :votes, :description, :url, :user_id, :comment_count])
     |> validate_required([:title, :description, :url, :user_id])
+    |> validate_title("A post with this title already exists. Use the search bar to find it.")
   end
 
   @doc false
@@ -29,5 +30,13 @@ defmodule CutTheBullshit.Posts.Post do
     post
     |> cast(attrs, [:votes])
     |> validate_required([:votes])
+  end
+
+  defp validate_title(changeset, message) do
+    changeset
+    |> validate_required([:title])
+    |> validate_length(:title, max: 160)
+    |> unsafe_validate_unique(:title, CutTheBullshit.Repo, message: message)
+    |> unique_constraint(:title, message: message)
   end
 end

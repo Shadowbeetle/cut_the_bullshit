@@ -98,7 +98,7 @@ defmodule CutTheBullshit.Seed do
     end
   end
 
-  def create_post_votes({:error, _} = _post_insert_result, _) do
+  def create_post_votes({:error, _, _, _} = _post_insert_result, _) do
     nil
   end
 
@@ -126,7 +126,7 @@ defmodule CutTheBullshit.Seed do
     end
   end
 
-  def create_comments({:ok, %Post{}} = _post_insert_result, _created_users) do
+  def create_comments(_, _, _created_users) do
     nil
   end
 
