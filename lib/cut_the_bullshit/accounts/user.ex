@@ -39,6 +39,7 @@ defmodule CutTheBullshit.Accounts.User do
     |> cast(attrs, [:email, :password, :username])
     |> validate_confirmation(:password, message: "password confirmation does not match")
     |> validate_email()
+    |> validate_username()
     |> validate_password(opts)
   end
 
@@ -49,6 +50,14 @@ defmodule CutTheBullshit.Accounts.User do
     |> validate_length(:email, max: 160)
     |> unsafe_validate_unique(:email, CutTheBullshit.Repo)
     |> unique_constraint(:email)
+  end
+
+  defp validate_username(changeset) do
+    changeset
+    |> validate_required([:username])
+    |> validate_length(:username, max: 160)
+    |> unsafe_validate_unique(:username, CutTheBullshit.Repo)
+    |> unique_constraint(:username)
   end
 
   defp validate_password(changeset, opts) do
