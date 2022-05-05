@@ -24,7 +24,7 @@ defmodule CutTheBullshit.Posts.Post do
     |> validate_required([:title, :user_id])
     |> validate_url()
     |> validate_title("A post with this title already exists. Use the search bar to find it.")
-    |> validate_description_or_url_required("Please provide either a URL or a description.")
+    |> validate_required_inclusion([:url, :description], "Please provide either a URL or a description.")
   end
 
   @doc false
@@ -50,15 +50,17 @@ defmodule CutTheBullshit.Posts.Post do
     )
   end
 
-  defp validate_description_or_url_required(changeset, message) do
-    changeset
-    |> check_constraint(:description,
-      name: :url_or_description_required,
-      message: message
-    )
-    |> check_constraint(:description,
-      name: :url_or_description_required,
-      message: message
-    )
+  defp validate_required_inclusion(changeset, fields, message) do
+    if Enum.any?(fields, &present?(changeset, &1)) do
+      changeset
+    else
+      # Add the error to the first field only since Ecto requires a field name for each error.
+      add_error(changeset, hd(fields), message)
+    end
+  end
+
+  defp present?(changeset, field) do
+    value = get_field(changeset, field)
+    value && value != ""
   end
 end
