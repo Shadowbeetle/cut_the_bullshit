@@ -2,6 +2,7 @@ defmodule CutTheBullshitWeb.Router do
   use CutTheBullshitWeb, :router
 
   import CutTheBullshitWeb.UserAuth
+  require Logger
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -35,6 +36,8 @@ defmodule CutTheBullshitWeb.Router do
   # If your application does not have an admins-only section yet,
   # you can use Plug.BasicAuth to set up some basic authentication
   # as long as you are also using SSL (which you should anyway).
+  Logger.info("running")
+
   if Mix.env() in [:dev, :test] do
     import Phoenix.LiveDashboard.Router
 
