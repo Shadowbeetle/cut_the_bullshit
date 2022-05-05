@@ -42,28 +42,9 @@
   </thead>
   <tbody id="posts">
     <%= for post <- @posts do %>
-      <tr id={"post-#{post.id}"}>
-        <td><%= post.title %></td>
-        <td><%= post.url %></td>
-        <td><%= post.user.username %></td>
-        <td><%= post.comment_count %></td>
-        <td>
-          <.live_component
-            module={CutTheBullshitWeb.PostLive.VoteComponent}
-            id={"vote-#{post.id}"}
-            content={post}
-            current_user={@current_user}
-          />
-        </td>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.post_show_path(@socket, :show, post) %></span>
-          <%= if is_same_user(@current_user, post.user) do %>
-            <span><%= live_patch "Edit", to: Routes.post_index_path(@socket, :edit, post, page: @page, order_by: @order_by) %></span>
-            <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: post.id, data: [confirm: "Are you sure?"] %></span>
-          <% end %>
-        </td>
-      </tr>
+    	<.post_row post={post} current_user={@current_user}
+                 post_show_path={Routes.post_show_path(@socket, :show, post)}
+                 post_edit_path={Routes.post_index_path(@socket, :edit, post, page: @page, order_by: @order_by)} />
     <% end %>
   </tbody>
 </table>

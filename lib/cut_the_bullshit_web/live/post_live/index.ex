@@ -5,6 +5,8 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Search.Query
 
+  import CutTheBullshitWeb.PostLive.PostComponent
+
   require Logger
 
   @impl true
