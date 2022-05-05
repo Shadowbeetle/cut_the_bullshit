@@ -11,7 +11,7 @@ defmodule CutTheBullshitWeb.PostLive.Index do
 
   @impl true
   def mount(_params, session, socket) do
-    socket = assign_defaults(session, socket)
+    socket = assign_defaults(session, socket) |> Surface.init
 
     {:ok, socket}
   end

@@ -10,7 +10,7 @@ defmodule CutTheBullshitWeb.PostLive.Show do
 
   @impl true
   def mount(_params, session, socket) do
-    {:ok, assign_defaults(session, socket)}
+    {:ok, assign_defaults(session, socket |> Surface.init)}
   end
 
   @impl true

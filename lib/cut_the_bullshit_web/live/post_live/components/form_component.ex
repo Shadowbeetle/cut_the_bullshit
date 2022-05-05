@@ -1,6 +1,8 @@
 defmodule CutTheBullshitWeb.PostLive.FormComponent do
   use Surface.LiveComponent
 
+  alias CutTheBullshitWeb.Router.Helpers, as: Routes
+
   alias Surface.Components.Form
   alias Surface.Components.Form.TextInput
   alias Surface.Components.Form.TextArea
