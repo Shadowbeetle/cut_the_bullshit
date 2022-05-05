@@ -48,11 +48,11 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
 
   defp save_post(socket, :new, params) do
     case Posts.create_post(params) do
-      {:ok, _post} ->
+      {:ok, post} ->
         {:noreply,
          socket
          |> put_flash(:info, "Post created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_redirect(to: Routes.post_show_path(socket, :show, post))}
 
       {:error, _, %Ecto.Changeset{} = changeset, _} ->
         {:noreply, assign(socket, changeset: changeset)}
