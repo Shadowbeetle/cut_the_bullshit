@@ -1,0 +1,17 @@
+<div>
+  <h2>{@title}</h2>
+
+  <Form
+    for={@changeset}
+    change="validate"
+    submit="save">
+  
+    <Label field={:text} />
+    <TextArea field={:text} />
+    <ErrorTag field={:text} />
+  
+    <div>
+      <button type="submit" phx-disable-with="Saving...">Save</button>
+    </div>
+  </Form>
+</div>

@@ -1,5 +1,4 @@
 defmodule CutTheBullshitWeb.PostLive.FormComponent do
-  # use CutTheBullshitWeb, :live_component
   use Surface.LiveComponent
 
   alias Surface.Components.Form
