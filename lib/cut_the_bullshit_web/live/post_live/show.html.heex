@@ -42,8 +42,10 @@
 
   <li>
     <strong>Description:</strong>
-    <%= for p <- @post.description |> String.split("\n") do %>
-      <p><%= p %></p>
+    <%= unless is_nil(@post.description) do %>
+      <%= for p <- @post.description |> String.split("\n") do %>
+        <p><%= p %></p>
+      <% end %>
     <% end %>
   </li>
 
