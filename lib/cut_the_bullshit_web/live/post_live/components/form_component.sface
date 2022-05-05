@@ -19,7 +19,7 @@
     <ErrorTag field={:url} />
   
     <div>
-      <button type="submit">Save</button>
+      <button type="submit" phx-disable-with="Saving...">Save</button>
     </div>
   </Form>
 </div>
