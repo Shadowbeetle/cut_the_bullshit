@@ -1,6 +1,12 @@
 defmodule CutTheBullshitWeb.PostLive.FormComponent do
-  use CutTheBullshitWeb, :live_component
+  # use CutTheBullshitWeb, :live_component
+  use Surface.LiveComponent
 
+  alias Surface.Components.Form
+  alias Surface.Components.Form.TextInput
+  alias Surface.Components.Form.TextArea
+  alias Surface.Components.Form.Label
+  alias Surface.Components.Form.ErrorTag
   alias CutTheBullshit.Posts
   require Logger
 

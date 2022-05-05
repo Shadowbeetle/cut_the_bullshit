@@ -1,6 +1,8 @@
 defmodule CutTheBullshitWeb.Router do
   use CutTheBullshitWeb, :router
 
+  import Surface.Catalogue.Router
+
   import CutTheBullshitWeb.UserAuth
   require Logger
 
@@ -111,5 +113,12 @@ defmodule CutTheBullshitWeb.Router do
     post "/users/confirm", UserConfirmationController, :create
     get "/users/confirm/:token", UserConfirmationController, :edit
     post "/users/confirm/:token", UserConfirmationController, :update
+  end
+
+  if Mix.env() == :dev do
+    scope "/" do
+      pipe_through :browser
+      surface_catalogue "/catalogue"
+    end
   end
 end
