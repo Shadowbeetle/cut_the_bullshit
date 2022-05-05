@@ -22,6 +22,7 @@ defmodule CutTheBullshit.Posts.Post do
     post
     |> cast(attrs, [:title, :votes, :description, :url, :user_id, :comment_count])
     |> validate_required([:title, :description, :url, :user_id])
+    |> validate_url()
     |> validate_title("A post with this title already exists. Use the search bar to find it.")
   end
 
@@ -34,9 +35,14 @@ defmodule CutTheBullshit.Posts.Post do
 
   defp validate_title(changeset, message) do
     changeset
-    |> validate_required([:title])
     |> validate_length(:title, max: 160)
     |> unsafe_validate_unique(:title, CutTheBullshit.Repo, message: message)
     |> unique_constraint(:title, message: message)
+  end
+
+  defp validate_url(changeset) do
+    changeset
+    # Taken from here https://mathiasbynens.be/demo/url-regex
+    |> validate_format(:url, ~r"^(https?|ftp)://[^\s/$.?#].[^\s]*$"i, message: "Please enter a valid URL.")
   end
 end
