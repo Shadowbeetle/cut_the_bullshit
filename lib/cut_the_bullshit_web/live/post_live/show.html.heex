@@ -12,11 +12,11 @@
   </.modal>
 <% end %>
 
-<%= if @live_action in [:edit_comment, :new_comment] do %>
+<%= if @live_action in [:edit_comment] do %>
   <.modal return_to={Routes.post_show_path(@socket, :show, @post)}>
     <.live_component
       module={CutTheBullshitWeb.CommentLive.FormComponent}
-      id={if @live_action == :edit_comment, do: @comment.id, else: :new}
+      id={@comment.id}
       title={@page_title}
       action={@live_action}
       comment={@comment}
@@ -38,6 +38,17 @@
     </div>
   <% end %>
 <% end %>
+
+<.live_component
+  module={CutTheBullshitWeb.CommentLive.FormComponent}
+  id={:new}
+  title={@page_title}
+  action={:new_comment}
+  comment={@comment}
+  post={@post}
+  current_user={@current_user}
+  return_to={Routes.post_show_path(@socket, :show, @post)}
+/>
 
 <div>
 <%= if is_logged_in(@current_user) do %>
