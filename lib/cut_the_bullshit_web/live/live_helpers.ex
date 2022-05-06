@@ -44,7 +44,8 @@ defmodule CutTheBullshitWeb.LiveHelpers do
             to: @return_to,
             id: "close",
             class: "phx-modal-close",
-            phx_click: hide_modal()
+            phx_click: hide_modal(),
+            replace: true
           %>
         <% else %>
           <a id="close" href="#" class="phx-modal-close" phx-click={hide_modal()}>✖</a>

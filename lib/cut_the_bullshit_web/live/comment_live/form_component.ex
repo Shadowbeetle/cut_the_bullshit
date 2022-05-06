@@ -50,7 +50,7 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Comment updated successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_redirect(to: socket.assigns.return_to, replace: true)}
 
       {:error, _, %Ecto.Changeset{} = changeset, _} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -63,7 +63,7 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Comment created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_redirect(to: socket.assigns.return_to replace: true)}
 
       {:error, _, %Ecto.Changeset{} = changeset, _} ->
         {:noreply, assign(socket, changeset: changeset)}
