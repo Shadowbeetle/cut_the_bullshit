@@ -82,4 +82,12 @@ defmodule CutTheBullshitWeb.LiveHelpers do
   def is_same_user(user, current_user) do
     user == current_user
   end
+
+  def get_humanized_time_difference(%NaiveDateTime{} = time1, %NaiveDateTime{} = time2) do
+    NaiveDateTime.diff(time1, time2)
+    |> Timex.Duration.from_seconds()
+    |> Timex.Format.Duration.Formatters.Humanized.format()
+    |> String.replace(~r",.+$", "")
+    |> Kernel.<>(" ago")
+  end
 end
