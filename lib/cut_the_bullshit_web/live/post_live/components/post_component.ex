@@ -23,16 +23,16 @@ defmodule CutTheBullshitWeb.PostLive.PostComponent do
       </td>
       <td>
         <div>
-          <LiveRedirect to={@post_show_path}>{@post.title}</LiveRedirect>
-          <Link :if={@post.url} to={@post.url}>[Website]</Link>
+          <span><LiveRedirect to={@post_show_path}>{@post.title}</LiveRedirect></span>
+          <span>| <Link :if={@post.url} to={@post.url}>[Website]</Link></span>
         </div>
         <div>
           <span>by {@post.user.username}</span>
           <span>{get_humanized_time_difference(NaiveDateTime.utc_now(), @post.inserted_at)}</span>
           <span>| <LiveRedirect to={@post_show_path}>{@post.comment_count} comments</LiveRedirect></span>
           {#if is_same_user(@current_user, @post.user)}
-            | <span><LivePatch to={@post_edit_path}>Edit</LivePatch></span>
-            | <span><Link to="#" opts={phx_click: "delete", phx_value_id: @post.id, data: [confirm: "Are you sure?"]}>Delete</Link></span>
+            <span>| <LivePatch to={@post_edit_path}>Edit</LivePatch></span>
+            <span>| <Link to="#" opts={phx_click: "delete", phx_value_id: @post.id, data: [confirm: "Are you sure?"]}>Delete</Link></span>
           {/if}
         </div>
       </td>
