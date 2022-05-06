@@ -29,52 +29,12 @@
   </.modal>
 <% end %>
 
-<ul>
-  <li>
-    <strong>ID:</strong>
-    <%= @post.id %>
-  </li>
-
-  <li>
-    <strong>Title:</strong>
-    <%= @post.title %>
-  </li>
-
-  <li>
-    <strong>Description:</strong>
-    <%= unless is_nil(@post.description) do %>
-      <%= for p <- @post.description |> String.split("\n") do %>
-        <p><%= p %></p>
-      <% end %>
-    <% end %>
-  </li>
-
-  <li>
-    <strong>Url:</strong>
-    <%= @post.url %>
-  </li>
-
-  <li>
-    <strong>Author:</strong>
-    <%= @post.user.username %>
-  </li>
-  
-  <li>
-    <strong>Comments:</strong>
-    <%= @post.comment_count %>
-  </li>
-
-  <li>
-    <strong>Votes:</strong>
-    <.live_component
-      module={CutTheBullshitWeb.PostLive.VoteComponent}
-      id={"vote-#{@post.id}"}
-      content={@post}
-      current_user={@current_user}
-    />
-  </li>
-
-</ul>
+<table>
+  <%= CutTheBullshitWeb.PostLive.PostComponent.render %{__context__: nil, id: "post-#{@post.id}", 
+              post: @post, current_user: @current_user,
+              post_show_path: Routes.post_show_path(@socket, :show, @post, page: @page),
+              post_edit_path: Routes.post_show_path(@socket, :edit, @post, page: @page)} %>
+</table>
 
 <%= if is_logged_in(@current_user) && is_same_user(@current_user, @post.user) do %>
   <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @post), class: "button" %></span> |
