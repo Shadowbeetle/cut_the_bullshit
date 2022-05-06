@@ -1,6 +1,7 @@
 defmodule CutTheBullshitWeb.PostLive.VoteComponent do
-  use CutTheBullshitWeb, :live_component
+  use Surface.LiveComponent
 
+  alias Surface.Components.Link
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Posts.Vote
@@ -46,7 +47,6 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
          |> assign(content: content)}
     end
   end
-
 
   def save_vote(:new, %Post{} = post, %User{} = current_user, clicked_vote) do
     Posts.vote_on_post(post, current_user, clicked_vote)
