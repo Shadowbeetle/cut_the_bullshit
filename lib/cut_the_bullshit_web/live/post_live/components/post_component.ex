@@ -14,14 +14,14 @@ defmodule CutTheBullshitWeb.PostLive.PostComponent do
   @impl true
   def render(assigns) do
     ~F"""
-    <tr id={"post-#{@post.id}"}>
-      <td>
+    <div id={"post-#{@post.id}"} style="display: flex; border-bottom: 0.5px solid rgb(128 128 128 / 20%);">
+      <div>
         {live_component CutTheBullshitWeb.PostLive.VoteComponent,
           id: "vote-#{@post.id}",
           content: @post,
           current_user: @current_user}
-      </td>
-      <td>
+      </div>
+      <div style="margin-left: 15px;display: flex;flex-direction: column;justify-content: center;">
         <div>
           <span><LiveRedirect to={@post_show_path}>{@post.title}</LiveRedirect></span>
           <span :if={@post.url}>| <Link  to={@post.url}>[Website]</Link></span>
@@ -35,8 +35,8 @@ defmodule CutTheBullshitWeb.PostLive.PostComponent do
             <span>| <Link to="#" opts={phx_click: "delete", phx_value_id: @post.id, data: [confirm: "Are you sure?"]}>Delete</Link></span>
           {/if}
         </div>
-      </td>
-    </tr>
+      </div>
+    </div>
     """
   end
 end

@@ -27,19 +27,17 @@
   </.modal>
 <% end %>
 
-<table>
-  <%= CutTheBullshitWeb.PostLive.PostComponent.render %{__context__: nil, id: "post-#{@post.id}", 
-              post: @post, current_user: @current_user,
-              post_show_path: Routes.post_show_path(@socket, :show, @post, page: @page),
-              post_edit_path: Routes.post_show_path(@socket, :edit, @post, page: @page)} %>
-  <%= if @post.description do %>
-    <%= for p <- newlines_to_html(@post.description) do %>
-      <tr>
-        <%= p %>
-      </tr>
-    <% end %>
+<%= CutTheBullshitWeb.PostLive.PostComponent.render %{__context__: nil, id: "post-#{@post.id}", 
+            post: @post, current_user: @current_user,
+            post_show_path: Routes.post_show_path(@socket, :show, @post, page: @page),
+            post_edit_path: Routes.post_show_path(@socket, :edit, @post, page: @page)} %>
+<%= if @post.description do %>
+  <%= for p <- newlines_to_html(@post.description) do %>
+    <tr>
+      <%= p %>
+    </tr>
   <% end %>
-</table>
+<% end %>
 
 <div>
 <%= if is_logged_in(@current_user) do %>
