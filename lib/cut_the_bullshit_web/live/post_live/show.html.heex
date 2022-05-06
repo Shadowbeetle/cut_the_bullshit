@@ -69,7 +69,7 @@
     </div>
     <div style="margin-left: 15px;">
       <div>
-        <span><%= "#{comment.user.username} " %> </span>
+        <span><%= comment.user.username %> </span>
         <span><%= get_humanized_time_difference(NaiveDateTime.utc_now(), comment.inserted_at) %></span>
         <%= if is_same_user(comment.user, @current_user) do %>
           <span>| <%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, @post.id, comment.id) %></span>
