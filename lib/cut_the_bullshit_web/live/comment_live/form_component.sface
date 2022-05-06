@@ -4,12 +4,17 @@
     change="validate"
     submit="save">
   
-    <Label field={:text} />
     <TextArea field={:text} />
     <ErrorTag field={:text} />
   
     <div>
-      <button type="submit" phx-disable-with="Saving...">Save</button>
+      <button type="submit" phx-disable-with="Saving...">
+        {#if @action == :new_comment}
+          Add comment
+        {#else}
+          Save
+        {/if}
+      </button>
     </div>
   </Form>
 </div>

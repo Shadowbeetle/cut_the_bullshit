@@ -3,7 +3,6 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
 
   alias Surface.Components.Form
   alias Surface.Components.Form.TextArea
-  alias Surface.Components.Form.Label
   alias Surface.Components.Form.ErrorTag
 
   alias CutTheBullshit.Comments
