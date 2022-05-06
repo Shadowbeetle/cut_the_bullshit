@@ -30,16 +30,6 @@
 </div>
 
 <table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Url</th>
-      <th>Author</th>
-      <th>Comments</th>
-      <th>Current User's Vote</th>
-      <th></th>
-    </tr>
-  </thead>
   <tbody id="posts">
     <%= for post <- @posts do %>
     	<%= CutTheBullshitWeb.PostLive.PostComponent.render %{__context__: nil, id: "post-#{post.id}", post: post, current_user: @current_user,
