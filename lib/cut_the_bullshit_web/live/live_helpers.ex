@@ -99,7 +99,11 @@ defmodule CutTheBullshitWeb.LiveHelpers do
       assigns = %{p: paragraph}
 
       ~H"""
-        <p><%= String.replace(@p, "\n", "<br>") %></p>
+        <p>
+          <%= for i <- String.split(@p, "\n") do %>
+            <%= i %><br/>
+          <% end %>
+        </p>
       """
     end)
   end
