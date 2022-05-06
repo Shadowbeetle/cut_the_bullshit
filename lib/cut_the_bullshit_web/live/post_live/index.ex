@@ -45,7 +45,7 @@ defmodule CutTheBullshitWeb.PostLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Posts")
+    |> assign(:page_title, "Posts")
     |> assign(:post, nil)
   end
 
