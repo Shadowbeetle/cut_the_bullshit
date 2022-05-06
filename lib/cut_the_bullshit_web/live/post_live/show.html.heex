@@ -67,7 +67,7 @@
       </div>
       <div>
         <%= for p <- newlines_to_html(comment.text) do %>
-          <p><%= p %></p>
+          <%= p %>
         <% end %>
       </div>
     </div>
