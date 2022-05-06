@@ -7,6 +7,7 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
   alias Surface.Components.Form.ErrorTag
 
   alias CutTheBullshit.Comments
+  alias CutTheBullshitWeb.Router.Helpers, as: Routes
 
   require Logger
 
@@ -22,10 +23,13 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"comment" => comment_params}, socket) do
+    current_user = socket.assigns.current_user
+    post = socket.assigns.post
+
     params =
       comment_params
-      |> Map.put("user_id", socket.assigns.current_user.id)
-      |> Map.put("post_id", socket.assigns.post.id)
+      |> Map.put("user_id", if(is_nil(current_user), do: nil, else: current_user.id))
+      |> Map.put("post_id", post.id)
 
     changeset =
       socket.assigns.comment
@@ -36,12 +40,18 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
   end
 
   def handle_event("save", %{"comment" => comment_params}, socket) do
-    params =
-      comment_params
-      |> Map.put("user_id", socket.assigns.current_user.id)
-      |> Map.put("post_id", socket.assigns.post.id)
+    if socket.assigns.current_user do
+      params =
+        comment_params
+        |> Map.put("user_id", socket.assigns.current_user.id)
+        |> Map.put("post_id", socket.assigns.post.id)
 
-    save_comment(socket, socket.assigns.action, params)
+      save_comment(socket, socket.assigns.action, params)
+    else
+      {:noreply,
+       socket
+       |> redirect(to: Routes.user_session_path(socket, :new))}
+    end
   end
 
   defp save_comment(socket, :edit_comment, params) do

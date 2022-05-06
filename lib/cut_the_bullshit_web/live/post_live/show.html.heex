@@ -50,12 +50,6 @@
   return_to={Routes.post_show_path(@socket, :show, @post)}
 />
 
-<div>
-<%= if is_logged_in(@current_user) do %>
-  <span><%= live_patch "New Comment", to: Routes.post_show_path(@socket, :new_comment, @post.id), class: "button" %></span>
-<% end %>
-</div>
-
 <div id="comments">
 <%= for comment <- @comments do %>
   <div id={"comment-#{comment.id}"} style="display: flex; border-bottom: 0.5px solid rgb(128 128 128 / 20%);">
