@@ -1,18 +1,17 @@
-<div style="display: flex; flex-direction: row">
-  <div style="display: flex; flex-direction: column">
-    <span>
-      <Link to="#" opts={phx_click: "vote", phx_value_vote_type: :up, phx_target: @myself, 
-                        style: get_up_arrow_style(@content)} >
-        ▲
-      </Link></span>
-    <span>
-      <Link to="#" opts={phx_click: "vote", phx_value_vote_type: :down, phx_target: @myself,
-                        style: get_down_arrow_style(@content)}>
-        ▼
-      </Link>
-    </span>
+<div style="display: flex; flex-direction: column; align-items: center">
+  <div>
+    <Link to="#" opts={phx_click: "vote", phx_value_vote_type: :up, phx_target: @myself, 
+                      style: get_up_arrow_style(@content)} >
+      ▲
+    </Link>
   </div>
-  <div style="display: flex; justify-content: center"> 
+  <div> 
     {@content.votes}
+  </div>
+  <div>
+    <Link to="#" opts={phx_click: "vote", phx_value_vote_type: :down, phx_target: @myself,
+                      style: get_down_arrow_style(@content)}>
+      ▼
+    </Link>
   </div>
 </div>
