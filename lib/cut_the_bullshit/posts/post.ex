@@ -1,6 +1,7 @@
 defmodule CutTheBullshit.Posts.Post do
   use Ecto.Schema
   import Ecto.Changeset
+  require Logger
 
   schema "posts" do
     field :description, :string
@@ -24,7 +25,10 @@ defmodule CutTheBullshit.Posts.Post do
     |> validate_required([:title, :user_id])
     |> validate_url()
     |> validate_title("A post with this title already exists. Use the search bar to find it.")
-    |> validate_required_inclusion([:url, :description], "Please provide either a URL or a description.")
+    |> validate_required_inclusion(
+      [:url, :description],
+      "Please provide either a URL or a description."
+    )
   end
 
   @doc false
@@ -51,6 +55,8 @@ defmodule CutTheBullshit.Posts.Post do
   end
 
   defp validate_required_inclusion(changeset, fields, message) do
+    Logger.info("url or desc present? #{Enum.any?(fields, &present?(changeset, &1))}")
+
     if Enum.any?(fields, &present?(changeset, &1)) do
       changeset
     else
@@ -61,6 +67,12 @@ defmodule CutTheBullshit.Posts.Post do
 
   defp present?(changeset, field) do
     value = get_field(changeset, field)
-    value && value != ""
+    value && value != "" && !white_space_only?(value)
   end
+
+  defp white_space_only?(value) when is_binary(value) do
+    value |> String.trim() == ""
+  end
+
+  defp white_space_only?(_value), do: false
 end
