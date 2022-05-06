@@ -53,7 +53,8 @@ defmodule CutTheBullshit.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:surface, "~> 0.7.4"},
       {:faker, "~> 0.17", only: [:test, :dev]},
-      {:surface_catalogue, "~> 0.4.0"}
+      {:surface_catalogue, "~> 0.4.0"},
+      {:timex, "~> 3.7"}
     ]
   end
 
