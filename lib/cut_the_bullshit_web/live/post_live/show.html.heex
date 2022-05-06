@@ -33,9 +33,9 @@
             post_edit_path: Routes.post_show_path(@socket, :edit, @post, page: @page)} %>
 <%= if @post.description do %>
   <%= for p <- newlines_to_html(@post.description) do %>
-    <tr>
+    <div>
       <%= p %>
-    </tr>
+    </div>
   <% end %>
 <% end %>
 
@@ -45,36 +45,37 @@
 <% end %>
 </div>
 
-<table>
-  <tbody id="comments">
-    <%= for comment <- @comments do %>
-      <tr id={"comment-#{comment.id}"}>
-        <td>
-          <%= for p <- newlines_to_html(comment.text) do %>
-            <p><%= p %></p>
-          <% end %>
-        </td>
-        <td><%= comment.user.username %></td>
-        <td><%= comment.votes %></td>
-        <td>
-          <.live_component
-            module={CutTheBullshitWeb.PostLive.VoteComponent}
-            id={"vote-#{comment.id}"}
-            content={comment}
-            current_user={@current_user}
-          />
-        </td>
-
-        <td>
-          <%= if is_same_user(comment.user, @current_user) do %>
-            <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, @post.id, comment.id), class: "button" %></span>
-            <span><%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div id="comments">
+<%= for comment <- @comments do %>
+  <div id={"comment-#{comment.id}"} style="display: flex; border-bottom: 0.5px solid rgb(128 128 128 / 20%);">
+    <div>
+      <.live_component
+        module={CutTheBullshitWeb.PostLive.VoteComponent}
+        id={"vote-#{comment.id}"}
+        content={comment}
+        current_user={@current_user}
+      />
+    </div>
+    <div style="margin-left: 15px;">
+      <div>
+        <span><%= "#{comment.user.username} " %> </span>
+        <span><%= get_humanized_time_difference(NaiveDateTime.utc_now(), comment.inserted_at) %></span>
+        <%= if is_same_user(comment.user, @current_user) do %>
+          <span>| <%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, @post.id, comment.id) %></span>
+          <span>| <%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
+        <% end %>
+      </div>
+      <div>
+        <%= for p <- newlines_to_html(comment.text) do %>
+          <p><%= p %></p>
+        <% end %>
+      </div>
+    </div>
+    <div>
+    </div>
+  </div>
+<% end %>
+</div>
 
 <div>
 	<%= live_patch "[more]", to: Routes.post_show_path(@socket, :show, @post, page: @page + 1) %>
