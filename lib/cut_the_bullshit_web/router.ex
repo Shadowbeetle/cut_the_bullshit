@@ -70,7 +70,6 @@ defmodule CutTheBullshitWeb.Router do
 
     live "/posts/:id/show/edit", PostLive.Show, :edit
 
-    live "/posts/:id/comments/new", PostLive.Show, :new_comment
     live "/posts/:id/comments/:comment_id/edit", PostLive.Show, :edit_comment
   end
 
@@ -118,7 +117,7 @@ defmodule CutTheBullshitWeb.Router do
   if Mix.env() == :dev do
     scope "/" do
       pipe_through :browser
-      surface_catalogue "/catalogue"
+      surface_catalogue("/catalogue")
     end
   end
 end
