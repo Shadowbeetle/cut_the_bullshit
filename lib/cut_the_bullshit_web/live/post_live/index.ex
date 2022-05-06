@@ -5,13 +5,15 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Search.Query
 
-  import CutTheBullshitWeb.PostLive.PostComponent
+  alias CutTheBullshitWeb.PostLive.PostComponent
 
   require Logger
 
   @impl true
   def mount(_params, session, socket) do
     socket = assign_defaults(session, socket) |> Surface.init
+
+    Logger.info(inspect &PostComponent.render/1)
 
     {:ok, socket}
   end
