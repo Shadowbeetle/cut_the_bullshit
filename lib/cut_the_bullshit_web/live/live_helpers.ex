@@ -90,4 +90,16 @@ defmodule CutTheBullshitWeb.LiveHelpers do
     |> String.replace(~r",.+$", "")
     |> Kernel.<>(" ago")
   end
+
+  def newlines_to_html(text) do
+    text
+    |> String.split(~r"\n{2,}")
+    |> Enum.map(fn paragraph ->
+      assigns = %{p: paragraph}
+
+      ~H"""
+        <p><%= String.replace(@p, "\n", "<br>") %></p>
+      """
+    end)
+  end
 end
