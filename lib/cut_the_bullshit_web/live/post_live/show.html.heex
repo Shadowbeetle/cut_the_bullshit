@@ -33,18 +33,13 @@
               post_show_path: Routes.post_show_path(@socket, :show, @post, page: @page),
               post_edit_path: Routes.post_show_path(@socket, :edit, @post, page: @page)} %>
   <%= if @post.description do %>
-    <tr>
-      <%= for p <- newlines_to_html(@post.description) do %>
+    <%= for p <- newlines_to_html(@post.description) do %>
+      <tr>
         <%= p %>
-      <% end %>
-    </tr>
+      </tr>
+    <% end %>
   <% end %>
 </table>
-
-<%= if is_logged_in(@current_user) && is_same_user(@current_user, @post.user) do %>
-  <span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @post), class: "button" %></span> |
-<% end %>
-<span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index) %></span>
 
 <div>
 <%= if is_logged_in(@current_user) do %>
@@ -53,19 +48,11 @@
 </div>
 
 <table>
-  <thead>
-    <tr>
-      <th>Comments</th>
-      <th>Author</th>
-      <th>Votes</th>
-      <th></th>
-    </tr>
-  </thead>
   <tbody id="comments">
     <%= for comment <- @comments do %>
       <tr id={"comment-#{comment.id}"}>
         <td>
-          <%= for p <- comment.text |> String.split("\n") do %>
+          <%= for p <- newlines_to_html(comment.text) do %>
             <p><%= p %></p>
           <% end %>
         </td>
