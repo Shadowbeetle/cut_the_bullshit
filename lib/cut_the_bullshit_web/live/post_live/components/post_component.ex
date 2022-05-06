@@ -24,7 +24,7 @@ defmodule CutTheBullshitWeb.PostLive.PostComponent do
       <td>
         <div>
           <span><LiveRedirect to={@post_show_path}>{@post.title}</LiveRedirect></span>
-          <span>| <Link :if={@post.url} to={@post.url}>[Website]</Link></span>
+          <span :if={@post.url}>| <Link  to={@post.url}>[Website]</Link></span>
         </div>
         <div>
           <span>by {@post.user.username}</span>
