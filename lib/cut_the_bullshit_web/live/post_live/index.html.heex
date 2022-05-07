@@ -16,6 +16,9 @@
     <%= live_patch "Top", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "popular") %>
     <%= live_patch "Latest", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "latest") %>
     <%= live_patch "Commented", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "comments")%>
+    <%= if is_logged_in(@current_user) do %>
+      <span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>
+    <% end %>
   </div>
   <.form
     let={f}
@@ -36,9 +39,6 @@
               post_edit_path: Routes.post_index_path(@socket, :edit, post, page: @page, order_by: @order_by)} %>
 <% end %>
 
-<%= if is_logged_in(@current_user) do %>
-  <span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>
-<% end %>
 <div>
 	<%= live_patch "[more]", to: Routes.post_index_path(@socket, :index, page: @page + 1, order_by: @order_by) %>
 </div>
