@@ -77,6 +77,19 @@ defmodule CutTheBullshit.Comments do
   """
   def get_comment!(id), do: Repo.get!(Comment, id) |> Repo.preload(:user)
 
+  def get_comment!(id, %User{} = current_user) do
+    query =
+      from c in Comment,
+        where: c.id == ^id,
+        left_join: user in assoc(c, :user),
+        left_join: vote in Vote,
+        on: [user_id: ^current_user.id, comment_id: c.id],
+        group_by: [c.id, user.id, vote.id],
+        preload: [user: user, vote_of_current_user: vote]
+
+    Repo.one!(query)
+  end
+
   @doc """
   Creates a comment.
 

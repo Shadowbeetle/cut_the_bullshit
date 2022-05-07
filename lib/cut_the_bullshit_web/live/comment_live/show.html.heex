@@ -44,7 +44,7 @@
   id={:new}
   title={@page_title}
   action={:new_comment}
-  comment={@comment}
+  comment={%Comments.Comment{}}
   post={@post}
   current_user={@current_user}
   return_to={Routes.post_show_path(@socket, :show, @post)}

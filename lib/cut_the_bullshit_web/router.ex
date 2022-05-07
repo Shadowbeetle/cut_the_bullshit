@@ -79,6 +79,8 @@ defmodule CutTheBullshitWeb.Router do
     live "/posts", PostLive.Index, :index
 
     live "/posts/:id", PostLive.Show, :show
+
+    live "/posts/:post_id/comments/:comment_id", CommentLive.Show, :show
   end
 
   ## Authentication routes
