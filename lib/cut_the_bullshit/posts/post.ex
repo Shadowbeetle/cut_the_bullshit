@@ -55,7 +55,6 @@ defmodule CutTheBullshit.Posts.Post do
   end
 
   defp validate_required_inclusion(changeset, fields, message) do
-    Logger.info("url or desc present? #{Enum.any?(fields, &present?(changeset, &1))}")
 
     if Enum.any?(fields, &present?(changeset, &1)) do
       changeset

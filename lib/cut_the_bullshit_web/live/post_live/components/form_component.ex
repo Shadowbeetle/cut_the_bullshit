@@ -39,8 +39,6 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
   end
 
   defp save_post(socket, :edit, params) do
-    Logger.info("return to: #{socket.assigns.return_to}")
-
     case Posts.update_post(socket.assigns.post, params) do
       {:ok, post} ->
         {:noreply,
