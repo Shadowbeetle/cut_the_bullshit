@@ -26,7 +26,7 @@ defmodule CutTheBullshitWeb.PostLive.PostComponent do
           <span><LiveRedirect to={@post_show_path}>{@post.title}</LiveRedirect></span>
           <span :if={@post.url}>| <Link  to={@post.url}>[Website]</Link></span>
         </div>
-        <div>
+        <div class="info-line">
           <span>by {@post.user.username}</span>
           <span>{get_humanized_time_difference(NaiveDateTime.utc_now(), @post.inserted_at)}</span>
           <span>| <LiveRedirect to={@post_show_path}>{@post.comment_count} comments</LiveRedirect></span>

@@ -62,7 +62,7 @@
       />
     </div>
     <div style="margin-left: 15px;">
-      <div>
+      <div class="info-line">
         <span>by <%= comment.user.username %> </span>
         <span><%= get_humanized_time_difference(NaiveDateTime.utc_now(), comment.inserted_at) %></span>
         <%= if is_same_user(comment.user, @current_user) do %>
