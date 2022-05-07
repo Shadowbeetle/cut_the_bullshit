@@ -42,11 +42,11 @@ defmodule CutTheBullshitWeb.PostLive.FormComponent do
     Logger.info("return to: #{socket.assigns.return_to}")
 
     case Posts.update_post(socket.assigns.post, params) do
-      {:ok, _post} ->
+      {:ok, post} ->
         {:noreply,
          socket
          |> put_flash(:info, "Post updated successfully")
-         |> push_redirect(to: socket.assigns.return_to, replace: true)}
+         |> push_redirect(to: Routes.post_show_path(socket, :show, post, replace: true), replace: true)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}

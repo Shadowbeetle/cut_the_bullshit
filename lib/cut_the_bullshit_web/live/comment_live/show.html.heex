@@ -1,0 +1,85 @@
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.comment_show_path(@socket, :show, @post)}>
+    <.live_component
+      module={CutTheBullshitWeb.PostLive.FormComponent}
+      id={@post.id}
+      title={@page_title}
+      action={@live_action}
+      post={@post}
+      current_user={@current_user}
+      return_to={Routes.comment_show_path(@socket, :show, @post)}
+    />
+  </.modal>
+<% end %>
+
+<%= if @live_action in [:edit_comment] do %>
+  <.modal return_to={Routes.comment_show_path(@socket, :show, @post)}>
+    <.live_component
+      module={CutTheBullshitWeb.CommentLive.FormComponent}
+      id={@comment.id}
+      title={@page_title}
+      action={@live_action}
+      comment={@comment}
+      post={@post}
+      current_user={@current_user}
+      return_to={Routes.comment_show_path(@socket, :show, @post)}
+    />
+  </.modal>
+<% end %>
+
+<%= CutTheBullshitWeb.PostLive.PostComponent.render %{__context__: nil, id: "post-#{@post.id}", 
+            post: @post, current_user: @current_user,
+            post_show_path: Routes.post_show_path(@socket, :show, @post),
+            post_edit_path: Routes.post_show_path(@socket, :edit, @post)} %>
+<%= if @post.description do %>
+  <%= for p <- newlines_to_html(@post.description) do %>
+    <div>
+      <%= p %>
+    </div>
+  <% end %>
+<% end %>
+
+<.live_component
+  module={CutTheBullshitWeb.CommentLive.FormComponent}
+  id={:new}
+  title={@page_title}
+  action={:new_comment}
+  comment={@comment}
+  post={@post}
+  current_user={@current_user}
+  return_to={Routes.post_show_path(@socket, :show, @post)}
+/>
+
+<div id="comments">
+  <div id={"comment-#{@comment.id}"} style="display: flex; border-bottom: 0.5px solid rgb(128 128 128 / 20%);">
+    <div>
+      <.live_component
+        module={CutTheBullshitWeb.PostLive.VoteComponent}
+        id={"vote-#{@comment.id}"}
+        content={@comment}
+        current_user={@current_user}
+      />
+    </div>
+    <div style="margin-left: 15px;">
+      <div class="info-line">
+        <span>by <%= @comment.user.username %> </span>
+        <span><%= get_humanized_time_difference(NaiveDateTime.utc_now(), @comment.inserted_at) %></span>
+        <%= if is_same_user(@comment.user, @current_user) do %>
+          <span>| <%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, @post.id, @comment.id) %></span>
+          <span>| <%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: @comment.id, data: [confirm: "Are you sure?"] %></span>
+        <% end %>
+      </div>
+      <div>
+        <%= for p <- newlines_to_html(@comment.text) do %>
+          <%= p %>
+        <% end %>
+      </div>
+    </div>
+    <div>
+    </div>
+  </div>
+</div>
+
+<div>
+	<%= live_patch "[all comments]", to: Routes.post_show_path(@socket, :show, @post) %>
+</div>
