@@ -17,7 +17,7 @@
     <%= live_patch "Latest", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "latest") %>
     <%= live_patch "Commented", to: Routes.post_index_path(@socket, :index, page: @page, order_by: "comments")%>
     <%= if is_logged_in(@current_user) do %>
-      <span><%= live_patch "New Post", to: Routes.post_index_path(@socket, :new) %></span>
+      <span><%= live_patch "Submit", to: Routes.post_index_path(@socket, :new) %></span>
     <% end %>
   </div>
   <.form
