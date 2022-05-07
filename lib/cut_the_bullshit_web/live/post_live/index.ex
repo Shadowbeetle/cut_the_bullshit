@@ -13,8 +13,6 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   def mount(_params, session, socket) do
     socket = assign_defaults(session, socket) |> Surface.init()
 
-    Logger.info(inspect(&PostComponent.render/1))
-
     {:ok, socket}
   end
 
@@ -72,7 +70,7 @@ defmodule CutTheBullshitWeb.PostLive.Index do
      |> put_flash(:info, "Post deleted")
      |> assign(
        :posts,
-       list_posts(socket.assigns.current_user, socket.assigns.page, socket.assigns.order_by)
+       list_posts(socket.assigns, socket.assigns.page, socket.assigns.order_by)
      )}
   end
 
