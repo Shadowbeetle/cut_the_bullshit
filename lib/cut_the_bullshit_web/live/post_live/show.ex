@@ -10,7 +10,7 @@ defmodule CutTheBullshitWeb.PostLive.Show do
 
   @impl true
   def mount(_params, session, socket) do
-    {:ok, assign_defaults(session, socket |> Surface.init)}
+    {:ok, assign_defaults(session, socket |> Surface.init())}
   end
 
   @impl true
@@ -35,6 +35,19 @@ defmodule CutTheBullshitWeb.PostLive.Show do
      |> assign(:comments, comments)
      |> assign(:comment, comment_being_edited)
      |> assign(:page, page)}
+  end
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    post = Posts.get_post!(id)
+    {:ok, _} = Posts.delete_post(post)
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Post deleted")
+     |> push_redirect(
+       to: Routes.post_index_path(socket, :index, replace: true),
+       replace: true
+     )}
   end
 
   @impl true
