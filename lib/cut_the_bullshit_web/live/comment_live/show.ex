@@ -3,7 +3,6 @@ defmodule CutTheBullshitWeb.CommentLive.Show do
 
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Comments
-  alias CutTheBullshit.Comments.Comment
 
   require Logger
 

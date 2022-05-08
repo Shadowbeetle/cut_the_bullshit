@@ -55,11 +55,11 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
 
   defp save_comment(socket, :edit_comment, params) do
     case Comments.update_comment(socket.assigns.comment, params) do
-      {:ok, _comment} ->
+      {:ok, comment} ->
         {:noreply,
          socket
          |> put_flash(:info, "Comment updated successfully")
-         |> push_redirect(to: socket.assigns.return_to, replace: true)}
+         |> push_redirect(to: socket.assigns.return_to <> "#comment-#{comment.id}", replace: true)}
 
       {:error, _, %Ecto.Changeset{} = changeset, _} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -68,11 +68,11 @@ defmodule CutTheBullshitWeb.CommentLive.FormComponent do
 
   defp save_comment(socket, :new_comment, params) do
     case Comments.create_comment(socket.assigns.post, params) do
-      {:ok, %{comment: _, vote: _}} ->
+      {:ok, %{comment: comment, vote: _}} ->
         {:noreply,
          socket
          |> put_flash(:info, "Comment created successfully")
-         |> push_redirect(to: socket.assigns.return_to, replace: true)}
+         |> push_redirect(to: socket.assigns.return_to <> "#comment-#{comment.id}", replace: true)}
 
       {:error, _, %Ecto.Changeset{} = changeset, _} ->
         {:noreply, assign(socket, changeset: changeset)}
