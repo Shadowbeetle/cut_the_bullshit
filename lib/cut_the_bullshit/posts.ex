@@ -34,13 +34,31 @@ defmodule CutTheBullshit.Posts do
     Repo.all(query)
   end
 
-  def list_posts(page, order_by) when is_integer(page) do
+  def list_posts(created_by_id, page, order_by) when is_integer(page) and is_nil(created_by_id) do
     page_size = 30
     offset = (page - 1) * 30
     order = set_order(order_by)
 
     query =
       from p in Post,
+        left_join: user in assoc(p, :user),
+        group_by: [p.id, user.id],
+        preload: [user: user],
+        order_by: ^order,
+        limit: ^page_size,
+        offset: ^offset
+
+    Repo.all(query)
+  end
+
+  def list_posts(created_by_id, page, order_by) when is_integer(page) do
+    page_size = 30
+    offset = (page - 1) * 30
+    order = set_order(order_by)
+
+    query =
+      from p in Post,
+        where: p.user_id == ^created_by_id,
         left_join: user in assoc(p, :user),
         group_by: [p.id, user.id],
         preload: [user: user],
@@ -64,13 +82,35 @@ defmodule CutTheBullshit.Posts do
     Repo.all(query)
   end
 
-  def list_posts(%User{} = current_user, page, order_by) when is_integer(page) do
+  def list_posts(%User{} = current_user, created_by_id, page, order_by)
+      when is_integer(page) and is_nil(created_by_id) do
     page_size = 30
     offset = (page - 1) * 30
     order = set_order(order_by)
 
     query =
       from p in Post,
+        left_join: user in assoc(p, :user),
+        left_join: vote in Vote,
+        on: [user_id: ^current_user.id, post_id: p.id],
+        group_by: [p.id, user.id, vote.id],
+        preload: [user: user, vote_of_current_user: vote],
+        order_by: ^order,
+        limit: ^page_size,
+        offset: ^offset
+
+    Repo.all(query)
+  end
+
+  def list_posts(%User{} = current_user, created_by_id, page, order_by)
+      when is_integer(page) do
+    page_size = 30
+    offset = (page - 1) * 30
+    order = set_order(order_by)
+
+    query =
+      from p in Post,
+        where: p.user_id == ^created_by_id,
         left_join: user in assoc(p, :user),
         left_join: vote in Vote,
         on: [user_id: ^current_user.id, post_id: p.id],

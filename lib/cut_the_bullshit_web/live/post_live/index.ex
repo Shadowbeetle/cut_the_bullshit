@@ -20,10 +20,11 @@ defmodule CutTheBullshitWeb.PostLive.Index do
   def handle_params(params, _url, socket) do
     page = if is_nil(params["page"]), do: 1, else: params["page"] |> String.to_integer()
     order_by = if is_nil(params["order_by"]), do: "latest", else: params["order_by"]
+    created_by_id = params["user_id"]
 
     {:noreply,
      apply_action(socket, socket.assigns.live_action, params)
-     |> assign(:posts, list_posts(socket.assigns, page, order_by))
+     |> assign(:posts, list_posts(socket.assigns, created_by_id, page, order_by))
      |> assign(:search_changeset, Query.changeset(%Query{}, %{"term" => ""}))
      |> assign(:page, page)
      |> assign(:order_by, order_by)}
@@ -61,7 +62,7 @@ defmodule CutTheBullshitWeb.PostLive.Index do
      |> assign(:posts, search_posts(socket.assigns, query["term"]))}
   end
 
-  def handle_event("delete", %{"id" => id}, socket) do
+  def handle_event("delete", %{"id" => id} = params, socket) do
     post = Posts.get_post!(id)
     {:ok, _} = Posts.delete_post(post)
 
@@ -70,15 +71,20 @@ defmodule CutTheBullshitWeb.PostLive.Index do
      |> put_flash(:info, "Post deleted")
      |> assign(
        :posts,
-       list_posts(socket.assigns, socket.assigns.page, socket.assigns.order_by)
+       list_posts(
+         socket.assigns,
+         params["user_id"],
+         socket.assigns.page,
+         socket.assigns.order_by
+       )
      )}
   end
 
-  defp list_posts(assigns, page, order_by) do
+  defp list_posts(assigns, created_by_id, page, order_by) do
     if Map.has_key?(assigns, :current_user) and not is_nil(assigns.current_user) do
-      Posts.list_posts(assigns.current_user, page, order_by)
+      Posts.list_posts(assigns.current_user, created_by_id, page, order_by)
     else
-      Posts.list_posts(page, order_by)
+      Posts.list_posts(created_by_id, page, order_by)
     end
   end
 
