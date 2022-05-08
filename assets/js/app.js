@@ -34,7 +34,6 @@ let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToke
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
 window.addEventListener("phx:page-loading-start", info => {
 	topbar.show()
-	document.querySelector(window.location.hash).scrollIntoView()
 })
 window.addEventListener("phx:page-loading-stop", info => {
 	topbar.hide()
@@ -48,3 +47,9 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
+
+document.addEventListener("DOMContentLoaded", function () {
+	if (window.location.hash) {
+		document.querySelector(window.location.hash).scrollIntoView()
+	}
+});
