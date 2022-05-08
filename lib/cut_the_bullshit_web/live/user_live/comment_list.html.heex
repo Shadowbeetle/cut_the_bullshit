@@ -1,25 +1,25 @@
-  <%= for comment <- @comments do %>
-    <div>
-      <div class="info-line">
-        <span>
-          by <%= live_redirect comment.user.username, to: Routes.user_show_path(@socket, :show, comment.user_id) %>
-        </span>
-        <span><%= get_humanized_time_difference(NaiveDateTime.utc_now(), comment.inserted_at) %></span>
-        <span>
-          on <%= live_redirect comment.post.title, to: Routes.post_show_path(@socket, :show, comment.post) %>
-        </span>
-        <%= if is_same_user(comment.user, @current_user) do %>
-          <span>| <%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, comment.post_id, comment.id) %></span>
-          <span>| <%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
-        <% end %>
-      </div>
-      <div>
-        <%= for p <- newlines_to_html(comment.text) do %>
-          <%= p %>
-        <% end %>
-      </div>
+<%= for comment <- @comments do %>
+  <div>
+    <div class="info-line">
+      <span>
+        by <%= live_redirect comment.user.username, to: Routes.user_show_path(@socket, :show, comment.user_id) %>
+      </span>
+      <span><%= get_humanized_time_difference(NaiveDateTime.utc_now(), comment.inserted_at) %></span>
+      <span>
+        on <%= live_redirect comment.post.title, to: Routes.post_show_path(@socket, :show, comment.post) %>
+      </span>
+      <%= if is_same_user(comment.user, @current_user) do %>
+        <span>| <%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit_comment, comment.post_id, comment.id) %></span>
+        <span>| <%= link "Delete", to: "#", phx_click: "delete_comment", phx_value_id: comment.id, data: [confirm: "Are you sure?"] %></span>
+      <% end %>
     </div>
-  <% end %>
+    <div>
+      <%= for p <- newlines_to_html(comment.text) do %>
+        <%= p %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
 <div>
   <%= unless @page <= 1 do %>
     <%= live_patch "[prev]", to: Routes.user_comment_list_path(@socket, :list, @user, page: @page - 1) %>
