@@ -11,3 +11,6 @@
 <div>
   <%= live_redirect "submissions", to: Routes.post_index_path(@socket, :index, user_id: @user.id) %>      
 </div>
+<div>
+  <%= live_redirect "comments", to: Routes.user_comment_list_path(@socket, :list, @user) %>      
+</div>

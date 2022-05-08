@@ -116,6 +116,7 @@ defmodule CutTheBullshitWeb.Router do
     post "/users/confirm/:token", UserConfirmationController, :update
 
     live "/users/:id", UserLive.Show, :show
+    live "/users/:id/comments", UserLive.CommentList, :list
   end
 
   if Mix.env() == :dev do

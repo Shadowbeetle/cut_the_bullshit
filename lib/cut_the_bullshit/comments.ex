@@ -61,6 +61,21 @@ defmodule CutTheBullshit.Comments do
     Repo.all(query)
   end
 
+  def list_comments_of_user(%User{} = user, page) when is_integer(page) do
+    page_size = 30
+    offset = (page - 1) * 30
+
+    query =
+      from c in Comment,
+        where: c.user_id == ^user.id,
+        limit: ^page_size,
+        offset: ^offset,
+        order_by: [desc: :votes, desc: :inserted_at],
+        preload: [:user, :post]
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single comment.
 
