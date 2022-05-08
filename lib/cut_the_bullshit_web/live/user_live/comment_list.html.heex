@@ -21,5 +21,15 @@
     </div>
   <% end %>
 <div>
-	<%= live_patch "[more]", to: Routes.user_comment_list_path(@socket, :list, @user, page: @page + 1) %>
+  <%= unless @page <= 1 do %>
+    <%= live_patch "[prev]", to: Routes.user_comment_list_path(@socket, :list, @user, page: @page - 1) %>
+  <% end %>
+
+  <%= unless @page <= 1 or @comments |> List.first |> is_nil do %>
+    <span> | </span>
+  <% end %>
+
+  <%= unless @comments |> List.first |> is_nil do %>
+    <%= live_patch "[more]", to: Routes.user_comment_list_path(@socket, :list, @user, page: @page + 1) %>
+  <% end %>
 </div>

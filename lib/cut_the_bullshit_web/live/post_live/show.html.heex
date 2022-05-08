@@ -86,5 +86,15 @@
 </div>
 
 <div>
-	<%= live_patch "[more]", to: Routes.post_show_path(@socket, :show, @post, page: @page + 1) %>
+  <%= unless @page <= 1 do %>
+    <%= live_patch "[prev]", to: Routes.post_show_path(@socket, :show, @post, page: @page - 1) %>
+  <% end %>
+  
+  <%= unless @page <= 1 or @comments |> List.first |> is_nil do %>
+    <span> | </span>
+  <% end %>
+  
+  <%= unless @comments |> List.first |> is_nil do %>
+    <%= live_patch "[more]", to: Routes.post_show_path(@socket, :show, @post, page: @page + 1) %>
+  <% end %>
 </div>
