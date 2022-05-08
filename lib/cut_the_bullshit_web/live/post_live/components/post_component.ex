@@ -3,6 +3,7 @@ defmodule CutTheBullshitWeb.PostLive.PostComponent do
   import CutTheBullshitWeb.LiveHelpers
 
   alias Surface.Components.{Link, LivePatch, LiveRedirect}
+  alias CutTheBullshitWeb.Router.Helpers, as: Routes
 
   require Logger
 
@@ -27,7 +28,11 @@ defmodule CutTheBullshitWeb.PostLive.PostComponent do
           <span :if={@post.url}>| <Link  to={@post.url}>[Website]</Link></span>
         </div>
         <div class="info-line">
-          <span>by {@post.user.username}</span>
+          <span>
+            by <LiveRedirect to={Routes.user_show_path(CutTheBullshitWeb.Endpoint, :show, @post.user_id)}>
+              {@post.user.username}
+            </LiveRedirect>
+          </span>
           <span>{get_humanized_time_difference(NaiveDateTime.utc_now(), @post.inserted_at)}</span>
           <span>| <LiveRedirect to={@post_show_path}>{@post.comment_count} comments</LiveRedirect></span>
           {#if is_same_user(@current_user, @post.user)}
