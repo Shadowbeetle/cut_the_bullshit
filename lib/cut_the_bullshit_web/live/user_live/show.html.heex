@@ -8,3 +8,6 @@
     </tr>
   </tbody>
 </table>
+<div>
+  <%= live_redirect "submissions", to: Routes.post_index_path(@socket, :index, user_id: @user.id) %>      
+</div>
