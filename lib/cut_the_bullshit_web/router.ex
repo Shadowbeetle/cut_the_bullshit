@@ -1,8 +1,6 @@
 defmodule CutTheBullshitWeb.Router do
   use CutTheBullshitWeb, :router
 
-  import Surface.Catalogue.Router
-
   import CutTheBullshitWeb.UserAuth
   require Logger
 
@@ -117,12 +115,5 @@ defmodule CutTheBullshitWeb.Router do
 
     live "/users/:id", UserLive.Show, :show
     live "/users/:id/comments", UserLive.CommentList, :list
-  end
-
-  if Mix.env() == :dev do
-    scope "/" do
-      pipe_through :browser
-      surface_catalogue("/catalogue")
-    end
   end
 end

@@ -1,12 +1,7 @@
 defmodule CutTheBullshitWeb.CommentLive.FormComponent do
-  use Surface.LiveComponent
-
-  alias Surface.Components.Form
-  alias Surface.Components.Form.TextArea
-  alias Surface.Components.Form.ErrorTag
+  use CutTheBullshitWeb, :live_component
 
   alias CutTheBullshit.Comments
-  alias CutTheBullshitWeb.Router.Helpers, as: Routes
 
   require Logger
 

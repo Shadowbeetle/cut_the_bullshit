@@ -1,6 +1,8 @@
 defmodule CutTheBullshitWeb.PostLive.Show do
   use CutTheBullshitWeb, :live_view
 
+  import CutTheBullshitWeb.PostLive.ComponentHelpers
+
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Comments
@@ -10,7 +12,7 @@ defmodule CutTheBullshitWeb.PostLive.Show do
 
   @impl true
   def mount(_params, session, socket) do
-    {:ok, assign_defaults(session, socket |> Surface.init())}
+    {:ok, assign_defaults(session, socket)}
   end
 
   @impl true

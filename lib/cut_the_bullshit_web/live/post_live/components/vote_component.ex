@@ -1,7 +1,7 @@
 defmodule CutTheBullshitWeb.PostLive.VoteComponent do
-  use Surface.LiveComponent
+  use CutTheBullshitWeb, :live_component
 
-  alias Surface.Components.Link
+  # TODO:fix double aliased votes
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Posts.Post
   alias CutTheBullshit.Posts.Vote
