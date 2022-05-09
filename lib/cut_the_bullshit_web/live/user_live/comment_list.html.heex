@@ -1,6 +1,5 @@
-<%= #TODO: add separator line between comments %>
 <%= for comment <- @comments do %>
-  <div>
+  <div class="bottom-separator">
     <div class="info-line">
       <span>
         by <%= live_redirect comment.user.username, to: Routes.user_show_path(@socket, :show, comment.user_id) %>

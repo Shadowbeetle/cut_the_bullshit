@@ -52,7 +52,7 @@
 
 <div id="comments">
 <%= for comment <- @comments do %>
-  <div id={"comment-#{comment.id}"} style="display: flex; border-bottom: 0.5px solid rgb(128 128 128 / 20%);">
+  <div id={"comment-#{comment.id}"} class="bottom-separator" style="display: flex;">
     <div>
       <.live_component
         module={CutTheBullshitWeb.PostLive.VoteComponent}

@@ -5,7 +5,7 @@ defmodule CutTheBullshitWeb.PostLive.ComponentHelpers do
 
   def post_component(assigns) do
     ~H"""
-    <div id={"post-#{@post.id}"} style="display: flex; border-bottom: 0.5px solid rgb(128 128 128 / 20%);">
+    <div id={"post-#{@post.id}"} class="bottom-separator" style="display: flex;">
       <div>
         <.live_component
           module={CutTheBullshitWeb.PostLive.VoteComponent}
