@@ -1,13 +1,12 @@
 defmodule CutTheBullshitWeb.PostLive.VoteComponent do
   use CutTheBullshitWeb, :live_component
 
-  # TODO:fix double aliased votes
   alias CutTheBullshit.Posts
   alias CutTheBullshit.Posts.Post
-  alias CutTheBullshit.Posts.Vote
+  alias CutTheBullshit.Posts.Vote, as: PostVote
   alias CutTheBullshit.Comments
   alias CutTheBullshit.Comments.Comment
-  alias CutTheBullshit.Comments.Vote
+  alias CutTheBullshit.Comments.Vote, as: CommentVote
   alias CutTheBullshit.Accounts.User
 
   require Logger
@@ -16,7 +15,10 @@ defmodule CutTheBullshitWeb.PostLive.VoteComponent do
   def update(assigns, socket) do
     vote_of_current_user =
       if is_nil(assigns.content.vote_of_current_user) do
-        %Vote{}
+        case assigns.content do
+          %Post{} -> %PostVote{}
+          %Comment{} -> %CommentVote{}
+        end
       else
         assigns.content.vote_of_current_user
       end
