@@ -34,7 +34,4 @@ npm-debug.log
 
 data/
 
-# Ignore generated js hook files for components
-assets/js/_hooks/
-
 .elixir_ls

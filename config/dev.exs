@@ -26,8 +26,7 @@ config :cut_the_bullshit, CutTheBullshitWeb.Endpoint,
   secret_key_base: "Rv5MxReAhkgZqULRf9lhBq5dvnm2UPtai6fkkHweGuEXKPHVXlGV/ljSj0ckRBOg",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
-    esbuild: {Esbuild, :install_and_run, [:catalogue, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
   ]
 
 # ## SSL Support
