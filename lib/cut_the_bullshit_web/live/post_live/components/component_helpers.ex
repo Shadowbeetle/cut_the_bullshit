@@ -26,7 +26,7 @@ defmodule CutTheBullshitWeb.PostLive.ComponentHelpers do
                                 to: Routes.user_show_path(CutTheBullshitWeb.Endpoint, :show, @post.user_id) %>
           </span>
           <span><%= get_humanized_time_difference(NaiveDateTime.utc_now(), @post.inserted_at) %></span>
-          <span>| <%= live_redirect @post.comment_count, to: @post_show_path %> comments </span>
+          <span>| <%= live_redirect "#{@post.comment_count} comments", to: @post_show_path %></span>
           <%= if is_same_user(@current_user, @post.user) do %>
             <span>| <%= live_patch "Edit", to: @post_edit_path %></span>
             <span>| <%= link "Delete", to: "#", phx_click: "delete", phx_value_id: @post.id,
