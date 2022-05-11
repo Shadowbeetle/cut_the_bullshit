@@ -51,7 +51,7 @@ defmodule CutTheBullshit.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:faker, "~> 0.17", only: [:test, :dev]},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
     ]
   end
 
