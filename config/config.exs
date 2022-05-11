@@ -24,7 +24,9 @@ config :cut_the_bullshit, CutTheBullshitWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :cut_the_bullshit, CutTheBullshit.Mailer, adapter: Swoosh.Adapters.Local
+config :cut_the_bullshit, CutTheBullshit.Mailer,
+  adapter: Swoosh.Adapters.Local,
+  from_address: "contact@example.com"
 
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false

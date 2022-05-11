@@ -52,6 +52,7 @@ defmodule CutTheBullshit.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:faker, "~> 0.17", only: [:test, :dev]},
       {:timex, "~> 3.7"},
+      {:gen_smtp, "~> 1.1"}
     ]
   end
 

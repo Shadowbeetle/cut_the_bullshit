@@ -8,10 +8,11 @@ defmodule CutTheBullshit.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"CutTheBullshit", "contact@example.com"})
+      |> from({"CutTheBullshit", Application.get_env(:cut_the_bullshit, CutTheBullshit.Mailer) |> Keyword.get(:from_address)})
       |> subject(subject)
       |> text_body(body)
 
+    IO.puts(inspect(email, pretty: true))
     with {:ok, _metadata} <- Mailer.deliver(email) do
       {:ok, email}
     end
